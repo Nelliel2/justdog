@@ -16,8 +16,28 @@ from bs4 import BeautifulSoup
 import datetime
 from operator import itemgetter, attrgetter, methodcaller
 import operator
+from distutils.core import setup
 
-
+setup(name='justdog',
+      version='1.0',
+      author='Nelliel2',
+      author_email='anna20025612@mail.ru',
+      packages=['distutils', 'distutils.command'], classifiers=[
+          'Development Status :: 4 - Beta',
+          'Environment :: Console',
+          'Environment :: Web Environment',
+          'Intended Audience :: End Users/Desktop',
+          'Intended Audience :: Developers',
+          'Intended Audience :: System Administrators',
+          'License :: OSI Approved :: Python Software Foundation License',
+          'Operating System :: MacOS :: MacOS X',
+          'Operating System :: Microsoft :: Windows',
+          'Operating System :: POSIX',
+          'Programming Language :: Python',
+          'Topic :: Communications :: Email',
+          'Topic :: Office/Business',
+          'Topic :: Software Development :: Bug Tracking',
+          ])
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 OKgoogle = ['что такое', 'окей, бинпап']
