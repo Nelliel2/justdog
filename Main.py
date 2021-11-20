@@ -9,6 +9,7 @@ import json
 import nltk
 import requests
 import string
+import os
 from lxml import html
 from googlesearch import search
 from bs4 import BeautifulSoup
@@ -442,4 +443,4 @@ async def bingpups(message):
         json.dump(users,f, indent=4)
     await bot.process_commands(message)
 
-bot.run('NzA3NTM4NjM2NTgwNzE2NTU0.XrKQtA.G55i1ziHtvJG_0ii8QT_VIBAr68')
+bot.run(os.getend('BOT_TOKEN'))
