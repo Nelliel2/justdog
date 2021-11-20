@@ -14,30 +14,9 @@ from lxml import html
 from googlesearch import search
 from bs4 import BeautifulSoup
 import datetime
-from operator import itemgetter, attrgetter, methodcaller
-import operator
-from distutils.core import setup
+from dotenv import load_dotenv
 
-setup(name='justdog',
-      version='1.0',
-      author='Nelliel2',
-      author_email='anna20025612@mail.ru',
-      packages=['distutils', 'distutils.command'], classifiers=[
-          'Development Status :: 4 - Beta',
-          'Environment :: Console',
-          'Environment :: Web Environment',
-          'Intended Audience :: End Users/Desktop',
-          'Intended Audience :: Developers',
-          'Intended Audience :: System Administrators',
-          'License :: OSI Approved :: Python Software Foundation License',
-          'Operating System :: MacOS :: MacOS X',
-          'Operating System :: Microsoft :: Windows',
-          'Operating System :: POSIX',
-          'Programming Language :: Python',
-          'Topic :: Communications :: Email',
-          'Topic :: Office/Business',
-          'Topic :: Software Development :: Bug Tracking',
-          ])
+load_dotenv()
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 OKgoogle = ['что такое', 'окей, бинпап']
@@ -62,16 +41,14 @@ async def bingpups(message):
     people = choice(membs)
     variants = {}
     num = re.findall(r'\d+', msg)
-    
-    with open('C:\\Users\\annas\\Documents\\Bingpup\\lvl.json', 'r', encoding='utf-8') as f:
+    with open('lvl.json', 'r', encoding='utf-8') as f:
         users = json.load(f)
-    with open('C:\\Users\\annas\\Documents\\Bingpup\\state.json', 'r', encoding='utf-8') as f4:
+    with open('state.json', 'r', encoding='utf-8') as f4:
         state = json.load(f4)
-    with open('C:\\Users\\annas\Documents\\Bingpup\\BOT_CONFIG.json', 'r', encoding='utf-8') as f2:
+    with open('BOT_CONFIG.json', 'r', encoding='utf-8') as f2:
         BOT_CONFIG = json.load(f2)
-    with open('C:\\Users\\annas\\Documents\\Bingpup\\BOT_CONFIG2.json', 'r', encoding='utf-8') as f3:
+    with open('BOT_CONFIG2.json', 'r', encoding='utf-8') as f3:
         BOT_CONFIG2 = json.load(f3)
-
     async def update_data(users,user):
         if not user in users['users']:
             users['users'][user] = {}
@@ -463,4 +440,4 @@ async def bingpups(message):
         json.dump(users,f, indent=4)
     await bot.process_commands(message)
 
-bot.run(os.getend('BOT_TOKEN'))
+bot.run(os.getenv('BOT_TOKEN'))
