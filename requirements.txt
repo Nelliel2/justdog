@@ -39,6 +39,7 @@ pylint-django==2.4.3
 pylint-plugin-utils==0.6
 pymorphy2==0.9.1
 pymorphy2-dicts-ru==2.4.417127.4579844
+python-dotenv==0.19.2
 pywin32-ctypes==0.2.0
 regex==2021.4.4
 requests==2.26.0
