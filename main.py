@@ -439,7 +439,7 @@ async def bingpups(message):
         embed.set_footer(text=f'Чтобы обратиться ко мне, пиши "Бинпап, "', icon_url=message.author.avatar_url) 
         await message.channel.send(embed=embed)
     elif ('бинбон' in words[0]):    
-        await message.channel.send("Бинбона больше нет! Говори сразу чет/нечет!")
+        await message.channel.send("Бинбона (и КНБ) больше нет! Говори сразу чет/нечет!")
     elif ('обучись' in msg):
         X, y = [], []
         for intent in BOT_CONFIG['intents']:
