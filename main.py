@@ -344,8 +344,8 @@ async def bingpups(message):
             if humanauthor != human:
                 if int(num[0]) <= int(users['users'][humanauthorid]['money']):
                     if int(num[0]) >= 0:
-                        users['users'][humanid]['money'] += int(num[0])
-                        users['users'][humanauthorid]['money'] -= int(num[0])
+                        users['users'][humanid]['money'] = int(num[0]) + int(users['users'][humanid]['money'])
+                        users['users'][humanauthorid]['money'] = int(users['users'][humanauthorid]['money']) - int(num[0])
                         embed = discord.Embed(description=f'{int(num[0])} 💸 {human}', color=0xff0000, title='Переведено')
                     else:
                         embed = discord.Embed(description=f'❌ Минимальная сумма перевода 1 💵', color=0xff0000)
@@ -517,12 +517,13 @@ async def bingpups(message):
         elif saybing == 'бинпап': 
             await add_lvl(users,str(message.author.id))
             if 'или' in msg:
+                words = re.findall(r'\w+', msg)
                 answer = words[0]
-                i = 0
+                i = 1
                 while 'или' != words[i]:
                     answer += " " + words[i]
                     i += 1   
-                await message.channel.send(random.choice([answer, msg.replace(answer + ' или', '', 1), f'*совещается с {people}*']))
+                await message.channel.send(random.choice([answer, msg.replace(answer + ' или ', '', 1), f'*совещается с {people}*']))
             elif len(words) > 0:
                 if users['users'][str(message.author.id)]['oldmsg'] != msg:
                     intent = botic(msg)
