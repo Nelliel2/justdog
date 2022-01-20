@@ -374,11 +374,12 @@ async def bingpups(message):
     elif ('таймер' in words[0]):
         if len(words) == 3 and words[1].isdigit():
             if 'ч' in msg:
-                tm = words[1].isdigit()*60*60
+                tm = int(words[1])*60*60
             elif 'м' in msg:
-                tm = words[1].isdigit()*60
+                tm = int(words[1])*60
             else:
-                tm = words[1].isdigit()
+                tm = int(words[1])
+            print('таймер на ' + str(tm))
             await message.add_reaction('✅')
             await asyncio.sleep(tm)
             embed = discord.Embed(description=f'Время вышло! ' + str(random.choice(['Гав!','Тяф!','Гав-гав"','Вуф!','Афф.'])) + f'\nВы просили напомнить:\n*'+ users['users'][str(message.author.id)]['remember'] +'*', title='Бинтаймер', color=0xff0000)
