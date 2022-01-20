@@ -265,7 +265,9 @@ async def bingpups(message):
             replace_values = {'я': 'ты', 'бинпап': 'я', 'тебе': 'Бинпапу', 'мне': 'тебе', 'твой': 'Бинпапа', 'мой': 'твой', 'эй ': ''}
             for i, j in replace_values.items(): 
                 m = m.replace(i, str(j))
-            now = datetime.datetime.now()
+            offset = datetime.timedelta(hours=3)
+            tz = datetime.timezone(offset, name='МСК')
+            now = datetime.datetime.now(tz=tz)
             replace_values = {'$mentioned[1, yes]': human, '$authorID': humanauthor, '$randomUser': people, '$message': m, '$angry': angmsg, '$username': people, '$random[0, 24]': randint(0,24), '$random[0, 60]': randint(0,60), '$random[0, 100]': randint(0,100), '$data': now.strftime('%d-%m-%Y %H:%M:%S')}
             for i, j in replace_values.items(): 
                 answer = answer.replace(i, str(j))
