@@ -97,7 +97,7 @@ async def bingpups(message):
     async def equate_var(users,user,var,value):
          users['users'][user][var] = value
     async def add_lvl(users,user):
-        if users['users'][user]['exp'] > users['users'][user]['lvl']:
+        if users['users'][user]['exp'] > users['users'][user]['lvl']*users['users'][user]['lvl']:
             #await message.channel.send(f'{message.author.mention} повысил свой уровень!')
             users['users'][user]['exp'] = 0
             users['users'][user]['lvl'] = users['users'][user]['lvl'] + 1
@@ -297,13 +297,32 @@ async def bingpups(message):
             embed.set_image(url=url)
             sendmessage = await message.channel.send(embed=embed)
             await asyncio.sleep(10)
+
             money = randint(500,1000)
             embed = discord.Embed(description=f'{humanauthor} получает {money} 💵', color=0xff0000)
+            
             embed.set_image(url=url)
             await sendmessage.edit(embed=embed)
             await add_var(users,str(message.author.id),'money',money)
         else:
             await message.channel.send('❌ Денег больше нет. Приходите через 3 минуты')
+    elif ('загадать желание' in msg):  
+        if len(words) > 2:
+            await equate_var(users,str(message.author.id),'wish',msg.replace('загадать желание ',''))
+            embed = discord.Embed(description=f'🐾 Теперь киньте денежку в колодец ⛲', color=0xff0000)
+        else:
+            embed = discord.Embed(description=f'❌ Скажите ваше желание', color=0xff0000)
+        await message.channel.send(embed=embed)
+    elif ('в колодец' in msg):  
+        if len(words) >= 3 and words[3].isdigit():
+            if int(words[3]) >= 100 and int(words[3]) <= users['users'][str(message.author.id)]['money']:
+                embed = discord.Embed(description=f'🌈 **{human}, ваше желание обязательно исполнится!** ✨\n★’ﾟ･::･｡'+users['users'][str(message.author.id)]['wish'] +'｡･::･ﾟ’☆', color=0xff0000)
+                await add_var(users,str(message.author.id),'money',-int(words[3]))
+            else:
+                embed = discord.Embed(description=f'❌ Минимальная стоимость желания 100 💵', color=0xff0000)
+        else:
+            embed = discord.Embed(description=f'❌ Введите сумму пожертвования', color=0xff0000)
+        await message.channel.send(embed=embed)
     elif ('баланс' in words[0]):
             humanid = str(humanchange(humanid, msg))
             human = '<@' + humanid + '>'
@@ -344,23 +363,6 @@ async def bingpups(message):
         await message.author.profile
     elif ('купить' in words[0]):   
         await sell(msg)
-    elif ('загадать желание' in msg):  
-        if len(words) > 2:
-            await equate_var(users,str(message.author.id),'wish',msg.replace('загадать желание ',''))
-            embed = discord.Embed(description=f'🐾 Теперь киньте денежку в колодец ⛲', color=0xff0000)
-        else:
-            embed = discord.Embed(description=f'❌ Скажите ваше желание', color=0xff0000)
-        await message.channel.send(embed=embed)
-    elif ('в колодец' in msg):  
-        if len(words) >= 3 and words[3].isdigit():
-            if int(words[3]) >= 100 and int(words[3]) <= users['users'][str(message.author.id)]['money']:
-                embed = discord.Embed(description=f'🌈 **{human}, ваше желание обязательно исполнится!** ✨\n★’ﾟ･::･｡'+users['users'][str(message.author.id)]['wish'] +'｡･::･ﾟ’☆', color=0xff0000)
-                await add_var(users,str(message.author.id),'money',-int(words[3]))
-            else:
-                embed = discord.Embed(description=f'❌ Минимальная стоимость желания 100 💵', color=0xff0000)
-        else:
-            embed = discord.Embed(description=f'❌ Введите сумму пожертвования', color=0xff0000)
-        await message.channel.send(embed=embed)
     elif ('состояние' in words[0]):
         embed = discord.Embed(description=f'❤️ - ' + str(state['bingpup']['joy']) + '%  🚿 - ' + str(state['bingpup']['clean']) + '%  💊 - ' + str(state['bingpup']['healf']) + '%  🍖 - ' + str(state['bingpup']['hunger']) + '%', color=0xff0000)
         embed.set_image(url='https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif')
@@ -419,6 +421,8 @@ async def bingpups(message):
             await top('money', 'банкиры', '💵')
         elif 'бинпапы' in words[1]:
             await top('bing', 'бинпапы', '🐶')
+    elif ('бинбон' in words[0]):    
+        await message.channel.send("Бинбона больше нет! Говори сразу чет/нечет!")
     elif ('с коэлум' in msg):
         answer = str(message.content).replace('с коэлум ','') + ' '
         for i in range(len(alphabet)):
@@ -438,8 +442,6 @@ async def bingpups(message):
         embed.set_thumbnail(url='https://images-ext-2.discordapp.net/external/Yx_PDy7yLOK3dIobeHhXUps6d9bBoZY4CJGJ0HlPzhw/https/pbs.twimg.com/media/EQJz34LU8AEiKfU.jpg') 
         embed.set_footer(text=f'Чтобы обратиться ко мне, пиши "Бинпап, "', icon_url=message.author.avatar_url) 
         await message.channel.send(embed=embed)
-    elif ('бинбон' in words[0]):    
-        await message.channel.send("Бинбона (и КНБ) больше нет! Говори сразу чет/нечет!")
     elif ('обучись' in msg):
         X, y = [], []
         for intent in BOT_CONFIG['intents']:
@@ -469,9 +471,9 @@ async def bingpups(message):
         with open('our_vectorizer.pickle', 'wb') as f0:
             pickle.dump(vectorizer, f0)
     else:
-        saybing = 'бинпып' if 'бинпып' in msg else 'нет бинпыпа' #Упоминается ли Бинпап?
+        saybing = 'бинпап' if 'бинпап' in msg else 'нет бинпапа' #Упоминается ли Бинпап?
         msg = clean(msg)
-        parasite = ['бинпып', 'а ', 'эй ', ' и ', ' в ', 'как бы', 'собственно говорят', 'аким образом', 'буквально', 'прямо', 'как говорится', 'так далее', 'скажем', 'ведь', 'как его', 'в натуре', 'так вот', 'короче', 'как сказать', 'видишь', 'слышишь', 'типа', 'на самом деле', 'вообще', 'в общем-то', 'в общем', 'в некотором роде', 'на фиг', 'на хрен', 'в принципе', 'итак', 'типа того', 'только', 'вот', 'в самом деле', 'данет', 'все такое', 'в целом', 'то есть', 'это', 'это само', 'еешкин кот', 'ну', 'ну вот', 'ну это', 'прикинь', 'прикол', 'значит', 'так сказать', 'понимаешь', 'допустим', 'слушай', 'например', 'просто', 'конкретно', 'да ладно', 'блин', 'походу', 'а-а-а', 'э-э-э', 'не вопрос', 'без проблем', 'практически', 'фактически', 'как-то так', 'ничего себе','пожалуйста']
+        parasite = ['бинпап', 'а ', 'эй ', ' и ', ' в ', 'как бы', 'собственно говорят', 'аким образом', 'буквально', 'прямо', 'как говорится', 'так далее', 'скажем', 'ведь', 'как его', 'в натуре', 'так вот', 'короче', 'как сказать', 'видишь', 'слышишь', 'типа', 'на самом деле', 'вообще', 'в общем-то', 'в общем', 'в некотором роде', 'на фиг', 'на хрен', 'в принципе', 'итак', 'типа того', 'только', 'вот', 'в самом деле', 'данет', 'все такое', 'в целом', 'то есть', 'это', 'это само', 'еешкин кот', 'ну', 'ну вот', 'ну это', 'прикинь', 'прикол', 'значит', 'так сказать', 'понимаешь', 'допустим', 'слушай', 'например', 'просто', 'конкретно', 'да ладно', 'блин', 'походу', 'а-а-а', 'э-э-э', 'не вопрос', 'без проблем', 'практически', 'фактически', 'как-то так', 'ничего себе','пожалуйста']
         for i in range(len(parasite)):
             msg = msg.replace(parasite[i],'') 
         words = re.findall(r'\w+', msg)
@@ -503,7 +505,7 @@ async def bingpups(message):
             await message.channel.send(chatbot_query(msg))
 
 
-        elif saybing == 'бинпып': 
+        elif saybing == 'бинпап': 
             await add_lvl(users,str(message.author.id))
             if 'или' in msg:
                 answer = words[0]
