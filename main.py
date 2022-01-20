@@ -241,10 +241,16 @@ async def bingpups(message):
     def humanchange(humanid, msg):
         if ('@' in msg):
             humanid = ''
-            for i in range(msg.find('!') + 1, len(msg)):
-                if msg[i] == '>':
-                    break
-                humanid += msg[i]
+            if ('!' in msg):
+                for i in range(msg.find('!') + 1, len(msg)):
+                    if msg[i] == '>':
+                        break
+                    humanid += msg[i]
+            else:
+                for i in range(msg.find('@') + 1, len(msg)):
+                    if msg[i] == '>':
+                        break
+                    humanid += msg[i]
             print(humanid)
         return humanid
     def edit(answer, humanauthor, human, msg, people, angmsg):
@@ -336,7 +342,7 @@ async def bingpups(message):
             human = '<@' + humanid + '>'
             humanauthorid = str(message.author.id)
             if humanauthor != human:
-                if int(num[0]) <= users['users'][humanauthorid]['money']:
+                if int(num[0]) <= int(users['users'][humanauthorid]['money']):
                     if int(num[0]) >= 0:
                         users['users'][humanid]['money'] += int(num[0])
                         users['users'][humanauthorid]['money'] -= int(num[0])
@@ -438,7 +444,7 @@ async def bingpups(message):
         await message.channel.send(answer)
     elif ('бинпап что ты умеешь' in msg or 'бинпап help' in msg or 'что умеет бинпап' in msg):
         description = ':pencil: **Знаю команды** :pencil:\n• тапки/носок\n• фас/фу\n• лежать/стоять/бежать/служить/домой\n• дай лапу\n• умри\n• голос\n• ешь/кусай\n• скажи [текст]\n• найди [вещь]\n• принеси [вещь]\n• лови [вещь]\n• обними/согрей\n• в бой\n• к руке/к ноге\n• спать\n• завари чай\n• дай пендаль\n• похвали\n• гулять\n*и другое...*\n\n'
-        description += ':crystal_ball: **Подскажу** :crystal_ball:\n• с коэлум/на коэлум [текст]\n• [что-то] или [что-то]\n• кого съедят ирисы\n• зачем/почему \n• где/куда\n• когда\n• кто\n• чьё\n• напомни\n• сколько\n• вероятность\n• возраст\n• цвет\n• дата\n•что такое [слово]/окей бинпап [вопрос]\n\n'
+        description += ':crystal_ball: **Подскажу** :crystal_ball:\n• с коэлум/на коэлум [текст]\n• [что-то] или [что-то]\n• кого съедят ирисы\n• зачем/почему \n• где/куда\n• когда\n• кто\n• чьё\n• напомни\n• сколько\n• вероятность\n• возраст\n• цвет\n• дата сегодня\n•что такое [слово]/окей бинпап [вопрос]\n\n'
         description += ':game_die: **Поиграю** :game_die:\n• брось кубик\n• рандом [до]/рандом [от] [до]\n• буква\n• удар\n• забота\n• состояние\n\n'
         description += ':bank: **Деньги** :bank:\n*Для этих команд не нужно писать "Бинпап, "*\n• где деньги\n• баланс\n• перевести [сумма] [упоминание]\n• загадать желание/бросить в колодец\n• чет/нечет [ставка]\n• лучшие [друзья/бинпапы/банкиры]\n• профиль\n• магазин'
         embed = discord.Embed(title='Привет! Я Бинпап', description=description, color=0xff0000)
@@ -512,7 +518,7 @@ async def bingpups(message):
             await add_lvl(users,str(message.author.id))
             if 'или' in msg:
                 answer = words[0]
-                i = 1
+                i = 0
                 while 'или' != words[i]:
                     answer += " " + words[i]
                     i += 1   
