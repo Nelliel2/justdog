@@ -44,6 +44,7 @@ async def bingpups(message):
     human = message.author.mention
     humanauthor = message.author.mention
     msg = str(message.content).replace('\n', ' ').lower()
+    msg = str(message.content).replace(',', '')
     words = re.findall(r'\w+', msg)
     guild = bot.guilds[0]
     membs = message.author.guild.members
@@ -81,9 +82,7 @@ async def bingpups(message):
         value = randint(5,10)
         if (state['bingpup'][var] + value < 100):
             state['bingpup'][var] += value
-            if ((state['bingpup'][var] < 40) and (value < 0)):
-                state['bingpup']['sad'] = 1
-            elif ((state['bingpup']['sad'] == 1) and (state['bingpup']['clean'] >= 40) and (state['bingpup']['hunger'] >= 40) and (state['bingpup']['hunger'] >= 40) and (state['bingpup']['joy'] >= 40)):
+            if ((state['bingpup']['sad'] == 1) and (state['bingpup']['clean'] >= 40) and (state['bingpup']['hunger'] >= 40) and (state['bingpup']['hunger'] >= 40) and (state['bingpup']['joy'] >= 40)):
                 state['bingpup']['sad'] = 0
         else:
             state['bingpup'][var] = 100
@@ -94,6 +93,8 @@ async def bingpups(message):
             state['bingpup']['hunger'] -= randint(3,10)
             state['bingpup']['healf'] -= randint(3,10)
             state['bingpup']['joy'] -= randint(3,10)
+            if ((state['bingpup']['sad'] == 0) and ((state['bingpup']['clean'] <= 40) or (state['bingpup']['hunger'] <= 40) or (state['bingpup']['hunger'] <= 40) or (state['bingpup']['joy'] <= 40))):
+                state['bingpup']['sad'] = 1
     async def equate_var(users,user,var,value):
          users['users'][user][var] = value
     async def add_lvl(users,user):
@@ -268,13 +269,13 @@ async def bingpups(message):
             else:
                 for word in BOT_CONFIG2['intents'][intent]['examples']:
                     m = m.replace(word, '')
-            replace_values = {'я': 'ты', 'бинпап': 'я', 'тебе': 'Бинпапу', 'мне': 'тебе', 'твой': 'Бинпапа', 'мой': 'твой', 'эй ': ''}
+            replace_values = {' я ': 'ты ', 'бинпап': 'я', 'тебе': 'Бинпапу', 'мне': 'тебе', 'твой': 'Бинпапа', 'мой': 'твой', 'эй ': ''}
             for i, j in replace_values.items(): 
                 m = m.replace(i, str(j))
             offset = datetime.timedelta(hours=3)
             tz = datetime.timezone(offset, name='МСК')
             now = datetime.datetime.now(tz=tz)
-            replace_values = {'$mentioned[1, yes]': human, '$authorID': humanauthor, '$randomUser': people, '$message': m, '$angry': angmsg, '$username': people, '$random[0, 24]': randint(0,24), '$random[0, 60]': randint(0,60), '$random[0, 100]': randint(0,100), '$data': now.strftime('%d-%m-%Y %H:%M:%S')}
+            replace_values = {'$mentioned[1, yes]': human, '$authorID': humanauthor, '$randomUser': people, '$message': m, '$angry': angmsg, '$username': people, '$random[0, 24]': randint(0,23), '$random[0, 60]': randint(0,60), '$random[0, 100]': randint(0,100), '$data': now.strftime('%d-%m-%Y %H:%M:%S')}
             for i, j in replace_values.items(): 
                 answer = answer.replace(i, str(j))
         return answer 
@@ -488,6 +489,8 @@ async def bingpups(message):
         words = re.findall(r'\w+', msg)
         intent = get_intent2(msg)
         if intent != 'Не удалось определить интент':
+            if ('утра' in msg):
+                return
             answer = random.choice(BOT_CONFIG2['intents'][intent]['responses'])
             if intent == 'random': #случайное число
                 if len(num) == 2:
