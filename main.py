@@ -44,7 +44,7 @@ async def bingpups(message):
     human = message.author.mention
     humanauthor = message.author.mention
     msg = str(message.content).replace('\n', ' ').lower()
-    msg = str(message.content).replace(',', '')
+    msg = msg.replace(',', '')
     words = re.findall(r'\w+', msg)
     guild = bot.guilds[0]
     membs = message.author.guild.members
