@@ -297,8 +297,8 @@ async def bingpups(message):
     await subtract_state()
     await on_ping(message)
     if ('где деньги' in msg):
-        if (time.time() - users['users'][str(message.author.id)]['seconds0'] > 180):
-            await add_var(users,str(message.author.id),'seconds0',round(time.time(),2)) 
+        if (time.time() - int(users['users'][str(message.author.id)]['seconds0']) > 180):
+            await equate_var(users,str(message.author.id),'seconds0',round(time.time(),2)) 
             intent = 'money'
             answer = edit(random.choice(BOT_CONFIG2['intents']['money']['responses']), humanauthor, human, msg, people, '')
             embed = discord.Embed(description=answer, color=0xff0000)
