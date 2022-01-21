@@ -371,7 +371,7 @@ async def bingpups(message):
         await message.author.profile
     elif ('купить' in words[0]):   
         await sell(msg)
-    elif ('состояние' in words[0]):
+    elif ('состояние' in words[0] or 'бинпап состояние' in msg):
         embed = discord.Embed(description=f'❤️ - ' + str(state['bingpup']['joy']) + '%  🚿 - ' + str(state['bingpup']['clean']) + '%  💊 - ' + str(state['bingpup']['healf']) + '%  🍖 - ' + str(state['bingpup']['hunger']) + '%', color=0xff0000)
         embed.set_image(url='https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif')
         await message.channel.send(embed=embed)
