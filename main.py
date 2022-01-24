@@ -82,7 +82,7 @@ async def bingpups(message):
         value = randint(5,10)
         if (state['bingpup'][var] + value < 100):
             state['bingpup'][var] += value
-            if ((state['bingpup']['sad'] == 1) and (state['bingpup']['clean'] >= 40) and (state['bingpup']['hunger'] >= 40) and (state['bingpup']['hunger'] >= 40) and (state['bingpup']['joy'] >= 40)):
+            if ((state['bingpup']['sad'] == 1) and (state['bingpup']['clean'] >= 60) and (state['bingpup']['hunger'] >= 60) and (state['bingpup']['hunger'] >= 60) and (state['bingpup']['joy'] >= 60)):
                 state['bingpup']['sad'] = 0
         else:
             state['bingpup'][var] = 100
@@ -93,7 +93,7 @@ async def bingpups(message):
             state['bingpup']['hunger'] -= randint(3,10)
             state['bingpup']['healf'] -= randint(3,10)
             state['bingpup']['joy'] -= randint(3,10)
-            if ((state['bingpup']['sad'] == 0) and ((state['bingpup']['clean'] <= 40) or (state['bingpup']['hunger'] <= 40) or (state['bingpup']['hunger'] <= 40) or (state['bingpup']['joy'] <= 40))):
+            if ((state['bingpup']['sad'] == 0) and ((state['bingpup']['clean'] <= 60) or (state['bingpup']['hunger'] <= 60) or (state['bingpup']['hunger'] <= 60) or (state['bingpup']['joy'] <= 60))):
                 state['bingpup']['sad'] = 1
     async def equate_var(users,user,var,value):
          users['users'][user][var] = value
