@@ -409,9 +409,9 @@ async def bingpups(message):
         else:
             embed = discord.Embed(description=f'❌ Укажите число и единицу времени', color=0xff0000)
             await message.channel.send(embed=embed)     
-    elif (('чет' in words[0]) or ('нечет' in words[0])):
-        if heroku:
-            if "чет " in msg:
+    elif (('чет' in words[0]) or ('нечет' in words[0])):     
+        if "чет " in msg:
+            if heroku:
                 if len(words) == 2 and words[1].isdigit():
                     if int(words[1]) <= users['users'][str(message.author.id)]['money']:
                         if int(words[1]) >= 0:
@@ -437,8 +437,8 @@ async def bingpups(message):
                         embed = discord.Embed(description=f'❌ Ваша ставка?', color=0xff0000)
                 await message.channel.send(embed=embed)
                 await add_state('joy')
-        else:
-            await message.channel.send('💤 Денежные операции временно недоступны')
+            else:
+                await message.channel.send('💤 Денежные операции временно недоступны')
     elif ('лучшие' in words[0]):
         if 'друзья' in words[1]:
             await top('lvl', 'друзья', 'ур.')
