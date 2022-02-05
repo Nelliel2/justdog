@@ -9,6 +9,7 @@ import json
 import nltk
 import requests
 import string
+import psycopg2
 import os
 from lxml import html
 from googlesearch import search
@@ -114,19 +115,15 @@ async def bingpups(message):
                 ment1 = ['<:bingpup_5:710240672707248238>', '<:bingpup_6:751028614681722920>']
                 await message.channel.send(random.choice(ment1))
     async def top(comparator,who,measure):
-        top = {}
+        top = []
         count = 1
         for user in users['users']:
-            top[user] = [users['users'][user]['name'], users['users'][user][comparator]]
-        top = sorted(top.items(), key=lambda x: x[1], reverse=True) 
-        top = dict(top)
+            top.append([users['users'][user]['name'], users['users'][user][comparator]])
+        top = sorted(top, key=lambda x: x[1], reverse=True) 
         answer = ''
-        for user in top:
-            human = top[user][0]
-            answer += f'{count}. {human} — {top[user][1]} {measure}\n'
-            count += 1
-            if count == 11:
-                break
+        for i in range(0,11):
+            human = top[i][0]
+            answer += f'{i+1}. {human} — {top[i][1]} {measure}\n'
         embed = discord.Embed(description=answer, color=0xff0000, title=f'Лучшие {who} Бинпапа 🌈', )
         embed.set_footer(text='Привет, друг!', icon_url=message.author.avatar_url) 
         embed.set_image(url='https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif')
@@ -343,11 +340,11 @@ async def bingpups(message):
             human = '<@' + humanid + '>'
             humanauthorid = str(message.author.id)
             if humanauthor != human:
-                if int(num[0]) <= int(users['users'][humanauthorid]['money']):
-                    if int(num[0]) >= 0:
-                        users['users'][humanid]['money'] = int(num[0]) + int(users['users'][humanid]['money'])
-                        users['users'][humanauthorid]['money'] = int(users['users'][humanauthorid]['money']) - int(num[0])
-                        embed = discord.Embed(description=f'{int(num[0])} 💸 {human}', color=0xff0000, title='Переведено')
+                if int(num[0] if num[0] !=humanid else num[1]) <= int(users['users'][humanauthorid]['money']):
+                    if int(num[0] if num[0] !=humanid else num[1]) >= 0:
+                        users['users'][humanid]['money'] = int(num[0] if num[0] !=humanid else num[1]) + int(users['users'][humanid]['money'])
+                        users['users'][humanauthorid]['money'] = int(users['users'][humanauthorid]['money']) - int(num[0] if num[0] !=humanid else num[1])
+                        embed = discord.Embed(description=f'{int(num[0] if num[0] !=humanid else num[1])} 💸 {human}', color=0xff0000, title='Переведено')
                     else:
                         embed = discord.Embed(description=f'❌ Минимальная сумма перевода 1 💵', color=0xff0000)
                 else:
@@ -358,10 +355,11 @@ async def bingpups(message):
     elif ('профиль' in words[0]):
         humanid = str(humanchange(humanid, msg))
         human = '<@' + humanid + '>'
-        description = f'Ник: {human} ('+message.author.name+')\nАккаунт создан: '+str(message.author.created_at)[:10]+'\nЖена: '+users['users'][humanid]['wife']+'\nХозяин: '+users['users'][humanid]['master']+'\nСлуги: '+users['users'][humanid]['servants']+'\nХарактеристики:\n'+str(users['users'][humanid]['lvl'])+' 🏆 '+str(users['users'][humanid]['exp'])+' ⏳ '+str(users['users'][humanid]['money'])+' 💵 '+str(users['users'][humanid]['bing'])+' 🐶\nИнвентарь:\n*пусто~*'
-        embed = discord.Embed(title='Бинпрофиль 🌈', description=description, color=message.author.color)
+        you = message.author if int(message.author.id)==int(humanid) else message.mentions[0]
+        description = f'Ник: {human} ('+str(you.name)+')\nАккаунт создан: '+str(you.created_at)[:10]+'\nЖена: '+users['users'][humanid]['wife']+'\nХозяин: '+users['users'][humanid]['master']+'\nСлуги: '+users['users'][humanid]['servants']+'\nХарактеристики:\n'+str(users['users'][humanid]['lvl'])+' 🏆 '+str(users['users'][humanid]['exp'])+' ⏳ '+str(users['users'][humanid]['money'])+' 💵 '+str(users['users'][humanid]['bing'])+' 🐶\nИнвентарь:\n*пусто~*'
+        embed = discord.Embed(title='Бинпрофиль 🌈', description=description, color=you.color)
         ad = state['bingpup']['ad']
-        embed.set_thumbnail(url=message.author.avatar_url) 
+        embed.set_thumbnail(url=you.avatar_url) 
         embed.set_footer(text=f'💵 Реклама: "{ad}" 💵!') 
         embed.set_image(url='https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif')
         await message.channel.send(embed=embed)
@@ -481,9 +479,16 @@ async def bingpups(message):
         with open('our_vectorizer.pickle', 'wb') as f0:
             pickle.dump(vectorizer, f0)
     else:
+        blacklist = ['сказал', 'тогда']
+        for i in range(len(blacklist)):
+            if blacklist[i] in msg:
+                await message.channel.send(random.choice(BOT_CONFIG['intents']['gav']['rancor' if users['users'][str(message.author.id)]['angry'] > 3 else 'sadness' if state['bingpup']['sad'] == 1 else 'responses'])) 
+                await message.channel.send(random.choice(BOT_CONFIG['intents']['bingpup']['rancor' if users['users'][str(message.author.id)]['angry'] > 3 else 'sadness' if state['bingpup']['sad'] == 1 else 'responses']))
+                return
         saybing = 'бинпап' if 'бинпап' in msg else 'нет бинпапа' #Упоминается ли Бинпап?
         msg = clean(msg)
-        parasite = ['бинпап', 'эй ', ' и ', ' в ', 'как бы', 'собственно говорят', 'аким образом', 'буквально', 'прямо', 'как говорится', 'так далее', 'скажем', 'ведь', 'как его', 'в натуре', 'так вот', 'короче', 'как сказать', 'видишь', 'слышишь', 'типа', 'на самом деле', 'вообще', 'в общем-то', 'в общем', 'в некотором роде', 'на фиг', 'на хрен', 'в принципе', 'итак', 'типа того', 'только', 'вот', 'в самом деле', 'данет', 'все такое', 'в целом', 'то есть', 'это', 'это само', 'еешкин кот', 'ну', 'ну вот', 'ну это', 'прикинь', 'прикол', 'значит', 'так сказать', 'понимаешь', 'допустим', 'слушай', 'например', 'просто', 'конкретно', 'да ладно', 'блин', 'походу', 'а-а-а', 'э-э-э', 'не вопрос', 'без проблем', 'практически', 'фактически', 'как-то так', 'ничего себе','пожалуйста']
+        parasite = ['бинпап', 'эй ', ' и ', ' в ', 'как бы', 'собственно говорят', 'аким образом', 'буквально', 'прямо', 'как говорится', 'так далее', 'скажем', 'ведь', 'как его', 'в натуре', 'так вот', 'короче', 'как сказать', 'видишь', 'слышишь', 'типа', 'на самом деле', 'вообще', 'в общем-то', 'в общем', 'в некотором роде', 'на фиг', 'на хрен', 'в принципе']
+        parasite.extend(['итак', 'типа того', 'только', 'вот', 'в самом деле', 'данет', 'все такое', 'в целом', 'то есть', 'это', 'это само', 'еешкин кот', 'ну', 'ну вот', 'ну это', 'прикинь', 'прикол', 'значит', 'так сказать', 'понимаешь', 'допустим', 'слушай', 'например', 'просто', 'конкретно', 'да ладно', 'блин', 'походу', 'а-а-а', 'э-э-э', 'не вопрос', 'без проблем', 'практически', 'фактически', 'как-то так', 'ничего себе','пожалуйста'])
         for i in range(len(parasite)):
             msg = msg.replace(parasite[i],'') 
         words = re.findall(r'\w+', msg)
@@ -529,6 +534,7 @@ async def bingpups(message):
                 await message.channel.send(random.choice([answer, msg.replace(answer + ' или ', '', 1), f'*совещается с {people}*']))
             elif len(words) > 0:
                 if users['users'][str(message.author.id)]['oldmsg'] != msg:
+                    await equate_var(users,str(message.author.id),'oldmsg',msg)
                     intent = botic(msg)
                     if intent == 'evil': #добавить злость
                         users['users'][str(message.author.id)]['angry'] += 1
@@ -565,6 +571,8 @@ async def bingpups(message):
                                 await message.channel.send(edit(answer, humanauthor, human, msg, people, angmsg))
                             elif BOT_CONFIG['intents'][intent]['double'] != ('none' or 'change'): #убавить грусть
                                 await add_state(BOT_CONFIG['intents'][intent]['double'])
+                                await equate_var(users,str(message.author.id),'oldmsg','')
+                                await add_var(users,str(message.author.id),'bing',1)
                             if BOT_CONFIG['intents'][intent]['time'] > 0: #время
                                 answer = random.choice(BOT_CONFIG['intents'][intent]['responses2'])
                                 await asyncio.sleep(BOT_CONFIG['intents'][intent]['time'])
@@ -578,7 +586,7 @@ async def bingpups(message):
                 await message.channel.send(random.choice(BOT_CONFIG['intents']['gav']['rancor' if users['users'][str(message.author.id)]['angry'] > 3 else 'sadness' if state['bingpup']['sad'] == 1 else 'responses'])) 
             await message.channel.send(random.choice(BOT_CONFIG['intents']['bingpup']['rancor' if users['users'][str(message.author.id)]['angry'] > 3 else 'sadness' if state['bingpup']['sad'] == 1 else 'responses']))
             await add_var(users,str(message.author.id),'exp',1)
-            await equate_var(users,str(message.author.id),'oldmsg',msg)
+            
 
     
 
