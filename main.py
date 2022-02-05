@@ -6,26 +6,26 @@ import time
 import re
 from random import randint
 import json
-import nltk
-import requests
+import datetime
 import string
-import psycopg2
 import os
+import pickle
+import asyncio
+import requests
+from dotenv import load_dotenv
+import nltk
 from lxml import html
 from googlesearch import search
 from bs4 import BeautifulSoup
-import datetime
 from dotenv import load_dotenv
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, HashingVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from pymorphy2 import MorphAnalyzer
-import pickle
-import asyncio
 
-
-load_dotenv()
 intents = discord.Intents.all()
+heroku = False
+load_dotenv()
 bot = commands.Bot(command_prefix='!', intents=intents)
 OKgoogle = ['что такое', 'окей бинпап']
 shop = ['реклама']
@@ -294,24 +294,27 @@ async def bingpups(message):
     await subtract_state()
     await on_ping(message)
     if ('где деньги' in msg):
-        if (time.time() - int(users['users'][str(message.author.id)]['seconds0']) > 180):
-            await equate_var(users,str(message.author.id),'seconds0',round(time.time(),2)) 
-            intent = 'money'
-            answer = edit(random.choice(BOT_CONFIG2['intents']['money']['responses']), humanauthor, human, msg, people, '')
-            embed = discord.Embed(description=answer, color=0xff0000)
-            url=random.choice(BOT_CONFIG2['intents']['money']['responses2'])
-            embed.set_image(url=url)
-            sendmessage = await message.channel.send(embed=embed)
-            await asyncio.sleep(10)
+        if heroku:
+            if (time.time() - int(users['users'][str(message.author.id)]['seconds0']) > 180):
+                await equate_var(users,str(message.author.id),'seconds0',round(time.time(),2)) 
+                intent = 'money'
+                answer = edit(random.choice(BOT_CONFIG2['intents']['money']['responses']), humanauthor, human, msg, people, '')
+                embed = discord.Embed(description=answer, color=0xff0000)
+                url=random.choice(BOT_CONFIG2['intents']['money']['responses2'])
+                embed.set_image(url=url)
+                sendmessage = await message.channel.send(embed=embed)
+                await asyncio.sleep(10)
 
-            money = randint(500,1000)
-            embed = discord.Embed(description=f'{humanauthor} получает {money} 💵', color=0xff0000)
-            
-            embed.set_image(url=url)
-            await sendmessage.edit(embed=embed)
-            await add_var(users,str(message.author.id),'money',money)
+                money = randint(500,1000)
+                embed = discord.Embed(description=f'{humanauthor} получает {money} 💵', color=0xff0000)
+                
+                embed.set_image(url=url)
+                await sendmessage.edit(embed=embed)
+                await add_var(users,str(message.author.id),'money',money)
+            else:
+                await message.channel.send('❌ Денег больше нет. Приходите через 3 минуты')
         else:
-            await message.channel.send('❌ Денег больше нет. Приходите через 3 минуты')
+            await message.channel.send('💤 Денежные операции временно недоступны')
     elif ('загадать желание' in msg):  
         if len(words) > 2:
             await equate_var(users,str(message.author.id),'wish',msg.replace('загадать желание ',''))
@@ -320,15 +323,18 @@ async def bingpups(message):
             embed = discord.Embed(description=f'❌ Скажите ваше желание', color=0xff0000)
         await message.channel.send(embed=embed)
     elif ('в колодец' in msg):  
-        if len(words) >= 3 and words[3].isdigit():
-            if int(words[3]) >= 100 and int(words[3]) <= users['users'][str(message.author.id)]['money']:
-                embed = discord.Embed(description=f'🌈 **{human}, ваше желание обязательно исполнится!** ✨\n★’ﾟ･::･｡'+users['users'][str(message.author.id)]['wish'] +'｡･::･ﾟ’☆', color=0xff0000)
-                await add_var(users,str(message.author.id),'money',-int(words[3]))
+        if heroku:
+            if len(words) >= 3 and words[3].isdigit():
+                if int(words[3]) >= 100 and int(words[3]) <= users['users'][str(message.author.id)]['money']:
+                    embed = discord.Embed(description=f'🌈 **{human}, ваше желание обязательно исполнится!** ✨\n★’ﾟ･::･｡'+users['users'][str(message.author.id)]['wish'] +'｡･::･ﾟ’☆', color=0xff0000)
+                    await add_var(users,str(message.author.id),'money',-int(words[3]))
+                else:
+                    embed = discord.Embed(description=f'❌ Минимальная стоимость желания 100 💵', color=0xff0000)
             else:
-                embed = discord.Embed(description=f'❌ Минимальная стоимость желания 100 💵', color=0xff0000)
+                embed = discord.Embed(description=f'❌ Введите сумму пожертвования', color=0xff0000)
+            await message.channel.send(embed=embed)
         else:
-            embed = discord.Embed(description=f'❌ Введите сумму пожертвования', color=0xff0000)
-        await message.channel.send(embed=embed)
+            await message.channel.send('💤 Денежные операции временно недоступны')
     elif ('баланс' in words[0]):
             humanid = str(humanchange(humanid, msg))
             human = '<@' + humanid + '>'
@@ -336,22 +342,25 @@ async def bingpups(message):
             embed = discord.Embed(description=f'Баланс {human}: {money} 💵', color=0xff0000)
             await message.channel.send(embed=embed)
     elif ('перевести' in words[0]):  
-            humanid = str(humanchange(humanid, msg))
-            human = '<@' + humanid + '>'
-            humanauthorid = str(message.author.id)
-            if humanauthor != human:
-                if int(num[0] if num[0] !=humanid else num[1]) <= int(users['users'][humanauthorid]['money']):
-                    if int(num[0] if num[0] !=humanid else num[1]) >= 0:
-                        users['users'][humanid]['money'] = int(num[0] if num[0] !=humanid else num[1]) + int(users['users'][humanid]['money'])
-                        users['users'][humanauthorid]['money'] = int(users['users'][humanauthorid]['money']) - int(num[0] if num[0] !=humanid else num[1])
-                        embed = discord.Embed(description=f'{int(num[0] if num[0] !=humanid else num[1])} 💸 {human}', color=0xff0000, title='Переведено')
+            if heroku:
+                humanid = str(humanchange(humanid, msg))
+                human = '<@' + humanid + '>'
+                humanauthorid = str(message.author.id)
+                if humanauthor != human:
+                    if int(num[0] if num[0] !=humanid else num[1]) <= int(users['users'][humanauthorid]['money']):
+                        if int(num[0] if num[0] !=humanid else num[1]) >= 0:
+                            users['users'][humanid]['money'] = int(num[0] if num[0] !=humanid else num[1]) + int(users['users'][humanid]['money'])
+                            users['users'][humanauthorid]['money'] = int(users['users'][humanauthorid]['money']) - int(num[0] if num[0] !=humanid else num[1])
+                            embed = discord.Embed(description=f'{int(num[0] if num[0] !=humanid else num[1])} 💸 {human}', color=0xff0000, title='Переведено')
+                        else:
+                            embed = discord.Embed(description=f'❌ Минимальная сумма перевода 1 💵', color=0xff0000)
                     else:
-                        embed = discord.Embed(description=f'❌ Минимальная сумма перевода 1 💵', color=0xff0000)
+                        embed = discord.Embed(description=f'❌ Недостаточно средств', color=0xff0000)
                 else:
-                    embed = discord.Embed(description=f'❌ Недостаточно средств', color=0xff0000)
+                    embed = discord.Embed(description=f'💸 Вы не можете передать деньги самому себе', color=0xff0000)
+                await message.channel.send(embed=embed)
             else:
-                embed = discord.Embed(description=f'💸 Вы не можете передать деньги самому себе', color=0xff0000)
-            await message.channel.send(embed=embed)    
+                await message.channel.send('💤 Денежные операции временно недоступны')
     elif ('профиль' in words[0]):
         humanid = str(humanchange(humanid, msg))
         human = '<@' + humanid + '>'
@@ -369,7 +378,10 @@ async def bingpups(message):
         await message.channel.send(embed=embed)
         await message.author.profile
     elif ('купить' in words[0]):   
-        await sell(msg)
+        if heroku:
+            await sell(msg)
+        else:
+            await message.channel.send('💤 Денежные операции временно недоступны')
     elif ('состояние' in words[0] or 'бинпап состояние' in msg):
         embed = discord.Embed(description=f'❤️ - ' + str(state['bingpup']['joy']) + '%  🚿 - ' + str(state['bingpup']['clean']) + '%  💊 - ' + str(state['bingpup']['healf']) + '%  🍖 - ' + str(state['bingpup']['hunger']) + '%', color=0xff0000)
         embed.set_image(url='https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif')
@@ -396,32 +408,35 @@ async def bingpups(message):
             embed = discord.Embed(description=f'❌ Укажите число и единицу времени', color=0xff0000)
             await message.channel.send(embed=embed)     
     elif (('чет' in words[0]) or ('нечет' in words[0])):
-        if "чет " in msg:
-            if len(words) == 2 and words[1].isdigit():
-                if int(words[1]) <= users['users'][str(message.author.id)]['money']:
-                    if int(words[1]) >= 0:
-                        cube1 = str(randint(0,5))
-                        сube2 = str(randint(0,5))
-                        print(cube1 + сube2)
-                        result = 'чет' if ((int(cube1)+int(сube2)) % 2) == 0 else 'нечет'
-                        cube1 = BOT_CONFIG['intents']['roll']['responses'][int(cube1)-1]
-                        сube2 = BOT_CONFIG['intents']['roll']['responses'][int(сube2)-1]
-                        await message.channel.send(cube1 + сube2)
-                        await message.channel.send(random.choice(['<:emoji_21:739609346610298931>', '<:bingpup_12:902268416952512552>', '<:bingbon:902268449168965632>']))
-                        if result == words[0]:
-                            users['users'][str(humanid)]['money'] += int(words[1])
-                            embed = discord.Embed(description=f'**{result.capitalize()}.** {human} получает {int(words[1])} 💵', color=0xff0000)
+        if heroku:
+            if "чет " in msg:
+                if len(words) == 2 and words[1].isdigit():
+                    if int(words[1]) <= users['users'][str(message.author.id)]['money']:
+                        if int(words[1]) >= 0:
+                            cube1 = str(randint(0,5))
+                            сube2 = str(randint(0,5))
+                            print(cube1 + сube2)
+                            result = 'чет' if ((int(cube1)+int(сube2)) % 2) == 0 else 'нечет'
+                            cube1 = BOT_CONFIG['intents']['roll']['responses'][int(cube1)-1]
+                            сube2 = BOT_CONFIG['intents']['roll']['responses'][int(сube2)-1]
+                            await message.channel.send(cube1 + сube2)
+                            await message.channel.send(random.choice(['<:emoji_21:739609346610298931>', '<:bingpup_12:902268416952512552>', '<:bingbon:902268449168965632>']))
+                            if result == words[0]:
+                                users['users'][str(humanid)]['money'] += int(words[1])
+                                embed = discord.Embed(description=f'**{result.capitalize()}.** {human} получает {int(words[1])} 💵', color=0xff0000)
+                            else:
+                                users['users'][str(humanid)]['money'] -= int(words[1])
+                                embed = discord.Embed(description=f'**{result.capitalize()}.** {human} теряет {int(words[1])} 💸', color=0xff0000)
                         else:
-                            users['users'][str(humanid)]['money'] -= int(words[1])
-                            embed = discord.Embed(description=f'**{result.capitalize()}.** {human} теряет {int(words[1])} 💸', color=0xff0000)
+                            embed = discord.Embed(description=f'❌ Минимальная ставка: 1 💵', color=0xff0000)
                     else:
-                        embed = discord.Embed(description=f'❌ Минимальная ставка: 1 💵', color=0xff0000)
+                        embed = discord.Embed(description=f'❌ Недостаточно средств', color=0xff0000)
                 else:
-                    embed = discord.Embed(description=f'❌ Недостаточно средств', color=0xff0000)
-            else:
-                    embed = discord.Embed(description=f'❌ Ваша ставка?', color=0xff0000)
-            await message.channel.send(embed=embed)
-            await add_state('joy')
+                        embed = discord.Embed(description=f'❌ Ваша ставка?', color=0xff0000)
+                await message.channel.send(embed=embed)
+                await add_state('joy')
+        else:
+            await message.channel.send('💤 Денежные операции временно недоступны')
     elif ('лучшие' in words[0]):
         if 'друзья' in words[1]:
             await top('lvl', 'друзья', 'ур.')
@@ -450,7 +465,7 @@ async def bingpups(message):
         embed.set_thumbnail(url='https://images-ext-2.discordapp.net/external/Yx_PDy7yLOK3dIobeHhXUps6d9bBoZY4CJGJ0HlPzhw/https/pbs.twimg.com/media/EQJz34LU8AEiKfU.jpg') 
         embed.set_footer(text=f'Чтобы обратиться ко мне, пиши "Бинпап, "', icon_url=message.author.avatar_url) 
         await message.channel.send(embed=embed)
-    elif ('обучись' in msg):
+    elif ('обучись123' in msg):
         X, y = [], []
         for intent in BOT_CONFIG['intents']:
             for example in BOT_CONFIG['intents'][intent]['examples']:
