@@ -6,22 +6,21 @@ import time
 import re
 from random import randint
 import json
-import datetime
-import string
 import os
-import pickle
-import asyncio
-import requests
-from dotenv import load_dotenv
 import nltk
+import requests
+import string
 from lxml import html
 from googlesearch import search
 from bs4 import BeautifulSoup
+import datetime
 from dotenv import load_dotenv
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, HashingVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from pymorphy2 import MorphAnalyzer
+import pickle
+import asyncio
 
 intents = discord.Intents.all()
 heroku = False
@@ -83,7 +82,7 @@ async def bingpups(message):
         value = randint(5,10)
         if (state['bingpup'][var] + value < 100):
             state['bingpup'][var] += value
-            if ((state['bingpup']['sad'] == 1) and (state['bingpup']['clean'] >= 60) and (state['bingpup']['hunger'] >= 60) and (state['bingpup']['hunger'] >= 60) and (state['bingpup']['joy'] >= 60)):
+            if ((state['bingpup']['sad'] == 1) and (state['bingpup']['clean'] >= 60) and (state['bingpup']['hunger'] >= 60) and (state['bingpup']['healf'] >= 60) and (state['bingpup']['joy'] >= 60)):
                 state['bingpup']['sad'] = 0
         else:
             state['bingpup'][var] = 100
@@ -116,16 +115,19 @@ async def bingpups(message):
                 await message.channel.send(random.choice(ment1))
     async def top(comparator,who,measure):
         top = []
-        count = 1
         for user in users['users']:
             top.append([users['users'][user]['name'], users['users'][user][comparator]])
         top = sorted(top, key=lambda x: x[1], reverse=True) 
         answer = ''
-        for i in range(0,11):
+        for i in range(0,10):
             human = top[i][0]
             answer += f'{i+1}. {human} — {top[i][1]} {measure}\n'
         embed = discord.Embed(description=answer, color=0xff0000, title=f'Лучшие {who} Бинпапа 🌈', )
-        embed.set_footer(text='Привет, друг!', icon_url=message.author.avatar_url) 
+        for i in range(0,1000):
+            human = top[i][0]
+            if users['users'][str(humanid)]['name']==human:
+                embed.set_footer(text=f'{i+1}. {human} — {top[i][1]} {measure}', icon_url=message.author.avatar_url)
+                break
         embed.set_image(url='https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif')
         top.clear()    
         await message.channel.send(embed=embed)         
@@ -494,12 +496,6 @@ async def bingpups(message):
         with open('our_vectorizer.pickle', 'wb') as f0:
             pickle.dump(vectorizer, f0)
     else:
-        blacklist = ['сказал', 'тогда']
-        for i in range(len(blacklist)):
-            if blacklist[i] in msg:
-                await message.channel.send(random.choice(BOT_CONFIG['intents']['gav']['rancor' if users['users'][str(message.author.id)]['angry'] > 3 else 'sadness' if state['bingpup']['sad'] == 1 else 'responses'])) 
-                await message.channel.send(random.choice(BOT_CONFIG['intents']['bingpup']['rancor' if users['users'][str(message.author.id)]['angry'] > 3 else 'sadness' if state['bingpup']['sad'] == 1 else 'responses']))
-                return
         saybing = 'бинпап' if 'бинпап' in msg else 'нет бинпапа' #Упоминается ли Бинпап?
         msg = clean(msg)
         parasite = ['бинпап', 'эй ', ' и ', ' в ', 'как бы', 'собственно говорят', 'аким образом', 'буквально', 'прямо', 'как говорится', 'так далее', 'скажем', 'ведь', 'как его', 'в натуре', 'так вот', 'короче', 'как сказать', 'видишь', 'слышишь', 'типа', 'на самом деле', 'вообще', 'в общем-то', 'в общем', 'в некотором роде', 'на фиг', 'на хрен', 'в принципе']
@@ -538,6 +534,12 @@ async def bingpups(message):
 
 
         elif saybing == 'бинпап': 
+            blacklist = ['сказал', 'тогда']
+            for i in range(len(blacklist)):
+                if blacklist[i] in msg:
+                    await message.channel.send(random.choice(BOT_CONFIG['intents']['gav']['rancor' if users['users'][str(message.author.id)]['angry'] > 3 else 'sadness' if state['bingpup']['sad'] == 1 else 'responses'])) 
+                    await message.channel.send(random.choice(BOT_CONFIG['intents']['bingpup']['rancor' if users['users'][str(message.author.id)]['angry'] > 3 else 'sadness' if state['bingpup']['sad'] == 1 else 'responses']))
+                    return
             await add_lvl(users,str(message.author.id))
             if 'или' in msg:
                 words = re.findall(r'\w+', msg)
@@ -569,6 +571,10 @@ async def bingpups(message):
                         answer = random.choice(BOT_CONFIG['intents'][intent]['sadness'])
                         angmsg = users['users'][str(message.author.id)]['angmsg'] 
                         await message.channel.send(edit(answer, humanauthor, human, msg, people, angmsg))
+                        if BOT_CONFIG['intents'][intent]['double'] != ('joy' or 'hunger' or 'healf' or 'clean'):
+                                await add_state(BOT_CONFIG['intents'][intent]['double'])
+                                await equate_var(users,str(message.author.id),'oldmsg','')
+                                await add_var(users,str(message.author.id),'bing',1)
                     else: #обычные сообщения
                         answer = random.choice(BOT_CONFIG['intents'][intent]['responses'])
                         if BOT_CONFIG['intents'][intent]['double'] == 'embed':
@@ -601,7 +607,7 @@ async def bingpups(message):
                 await message.channel.send(random.choice(BOT_CONFIG['intents']['gav']['rancor' if users['users'][str(message.author.id)]['angry'] > 3 else 'sadness' if state['bingpup']['sad'] == 1 else 'responses'])) 
             await message.channel.send(random.choice(BOT_CONFIG['intents']['bingpup']['rancor' if users['users'][str(message.author.id)]['angry'] > 3 else 'sadness' if state['bingpup']['sad'] == 1 else 'responses']))
             await add_var(users,str(message.author.id),'exp',1)
-            
+            await equate_var(users,str(message.author.id),'name',message.author.name)
 
     
 

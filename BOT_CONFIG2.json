@@ -42,7 +42,7 @@
         "examples": ["обними"],
         "double": "none",
         "time": 0,
-        "responses": ["<:n_xie_lian13:806175570597511230>"]
+        "responses": ["<:hug:931255496680296508>"]
       },
       "rah": {
         "examples": ["ура"],
@@ -63,7 +63,7 @@
         "double": "none",
         "time": 0,
         "responses": ["$authorID умоляет Бинпапа дать ему в долг...", " $authorID грабит Бинпапа...", "$authorID надеется на лучшее...", "Бинпап достаёт деньги из карманов...", "Бинпап ищет клад..."],
-        "responses2": ["https://thumbor.forbes.com/thumbor/fit-in/1200x0/filters%3Aformat%28jpg%29/https%3A%2F%2Fblogs-images.forbes.com%2Flevelup%2Ffiles%2F2016%2F10%2F41757b9b-d74e-438c-ac3f-076d5193308b1.gif", "https://i.gifer.com/9BBW.gif", "https://i.gifer.com/3ww6.gif", "https://cdn.fishki.net/upload/post/2019/08/29/3070545/1566647688-04.gif", "https://i.gifer.com/embedded/download/1Py.gif", "https://i.gifer.com/embedded/download/DSqy.gif", "https://i.gifer.com/UPd6.gif", "https://n1s1.hsmedia.ru/27/f8/7d/27f87d8abcf42c3948a749a7c614581f/600x600_0xac120002_9861927911545994942.gif"]
+        "responses2": ["https://thumbor.forbes.com/thumbor/fit-in/1200x0/filters%3Aformat%28jpg%29/https%3A%2F%2Fblogs-images.forbes.com%2Flevelup%2Ffiles%2F2016%2F10%2F41757b9b-d74e-438c-ac3f-076d5193308b1.gif", "https://i.gifer.com/9BBW.gif", "https://i.gifer.com/3ww6.gif", "https://cdn.fishki.net/upload/post/2019/08/29/3070545/1566647688-04.gif", "https://i.gifer.com/embedded/download/1Py.gif", "https://i.gifer.com/embedded/download/DSqy.gif", "https://i.gifer.com/UPd6.gif", "https://n1s1.hsmedia.ru/27/f8/7d/27f87d8abcf42c3948a749a7c614581f/600x600_0xac120002_9861927911545994942.gif", "https://pa1.narvii.com/6948/c81bf06cc714f8c1c221273b243e189d5166f90ar1-500-375_hq.gif", "https://pa1.narvii.com/6968/3c91b51d2c11f7f63de14c0f32f1abea225a38edr1-500-280_hq.gif", "https://i.pinimg.com/originals/4f/c5/04/4fc5049bd3d7440c5f6024917a2ca15e.gif", "https://image.myanimelist.net/ui/OK6W_koKDTOqqqLDbIoPAgplx-ZkNyc-IApwzpdryg19z0tr1msADXKPkuuLJ4km", "https://thumbs.gfycat.com/DesertedContentKookaburra-size_restricted.gif", "https://i.pinimg.com/originals/41/6b/ca/416bca3b3ba8e2620a792575999535b0.gif", "https://data.whicdn.com/images/162524825/original.gif"]
       },
       "data": {
         "examples": ["сегодня какое число", "сегодня какой день", "какой сегодня день", "какая сегодня дата", "дата сейчас", "какое сейчас время", "подскажите время", "подскажи время", "сколько времени", "сколько сейчас времени", "сколько по москве сейчас", "сколько по мск сейчас"],
@@ -90,7 +90,7 @@
           "responses": ["Ваше число: "]
           },
       "when": {
-        "examples": ["во сколько", "в какое время"],
+        "examples": ["во сколько"],
         "double": "embed",
         "title": "Во сколько",
         "responses": ["В **$random[0, 24]:$random[0, 60]** $message"]
