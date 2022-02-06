@@ -527,10 +527,11 @@ async def bingpups(message):
                     answer = random.choice(BOT_CONFIG2['intents'][intent]['responses2'])
                     await message.channel.send(edit(answer, humanauthor, human, msg, people, '2'))          
 
-        elif any(word in msg for word in OKgoogle):
-            for word in OKgoogle:
-                msg = msg.replace(word, '')
-            await message.channel.send(chatbot_query(msg))
+        elif (OKgoogle[0] in msg or OKgoogle[1] in msg):
+            if len(msg) < 5:
+                for word in OKgoogle:
+                    msg = msg.replace(word, '')
+                await message.channel.send(chatbot_query(msg))
 
 
         elif saybing == 'бинпап': 
