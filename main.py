@@ -23,7 +23,7 @@ import pickle
 import asyncio
 
 intents = discord.Intents.all()
-heroku = False
+bank = False
 load_dotenv()
 bot = commands.Bot(command_prefix='!', intents=intents)
 OKgoogle = ['что такое', 'окей бинпап']
@@ -227,7 +227,7 @@ async def bingpups(message):
                 text1 = clean(example)
                 text2 = clean(msg)
                 distance = nltk.edit_distance(text1, text2) / max(len(text1), len(text2))
-                if distance < 0.4: 
+                if distance < 0.2: 
                     if ((intent in variants) and (variants[intent] > distance)) or (intent not in variants):
                         variants[intent] = distance         
         intent = min(variants, key=variants.get, default='Не удалось определить интент')
@@ -274,7 +274,7 @@ async def bingpups(message):
             offset = datetime.timedelta(hours=3)
             tz = datetime.timezone(offset, name='МСК')
             now = datetime.datetime.now(tz=tz)
-            replace_values = {'$mentioned[1, yes]': human, '$authorID': humanauthor, '$randomUser': people, '$message': m, '$angry': angmsg, '$username': people, '$random[0, 24]': randint(0,23), '$random[0, 60]': randint(0,60), '$random[0, 100]': randint(0,100), '$data': now.strftime('%d-%m-%Y %H:%M:%S')}
+            replace_values = {'$mentioned[1, yes]': human, '$authorID': humanauthor, '$randomUser': people, ' $message': m, '$angry': angmsg, '$username': people, '$random[0, 24]': randint(0,23), '$random[0, 60]': randint(0,60), '$random[0, 100]': randint(0,100), '$data': now.strftime('%d-%m-%Y %H:%M:%S')}
             for i, j in replace_values.items(): 
                 answer = answer.replace(i, str(j))
         return answer 
@@ -296,7 +296,7 @@ async def bingpups(message):
     await subtract_state()
     await on_ping(message)
     if ('где деньги' in msg):
-        if heroku:
+        if bank:
             if (time.time() - int(users['users'][str(message.author.id)]['seconds0']) > 180):
                 await equate_var(users,str(message.author.id),'seconds0',round(time.time(),2)) 
                 intent = 'money'
@@ -325,7 +325,7 @@ async def bingpups(message):
             embed = discord.Embed(description=f'❌ Скажите ваше желание', color=0xff0000)
         await message.channel.send(embed=embed)
     elif ('в колодец' in msg):  
-        if heroku:
+        if bank:
             if len(words) >= 3 and words[3].isdigit():
                 if int(words[3]) >= 100 and int(words[3]) <= users['users'][str(message.author.id)]['money']:
                     embed = discord.Embed(description=f'🌈 **{human}, ваше желание обязательно исполнится!** ✨\n★’ﾟ･::･｡'+users['users'][str(message.author.id)]['wish'] +'｡･::･ﾟ’☆', color=0xff0000)
@@ -344,7 +344,7 @@ async def bingpups(message):
             embed = discord.Embed(description=f'Баланс {human}: {money} 💵', color=0xff0000)
             await message.channel.send(embed=embed)
     elif ('перевести' in words[0]):  
-            if heroku:
+            if bank:
                 humanid = str(humanchange(humanid, msg))
                 human = '<@' + humanid + '>'
                 humanauthorid = str(message.author.id)
@@ -364,6 +364,8 @@ async def bingpups(message):
             else:
                 await message.channel.send('💤 Денежные операции временно недоступны')
     elif ('профиль' in words[0]):
+        if 'бпрофиль' in words[0]:
+            return
         humanid = str(humanchange(humanid, msg))
         human = '<@' + humanid + '>'
         you = message.author if int(message.author.id)==int(humanid) else message.mentions[0]
@@ -380,7 +382,7 @@ async def bingpups(message):
         await message.channel.send(embed=embed)
         await message.author.profile
     elif ('купить' in words[0]):   
-        if heroku:
+        if bank:
             await sell(msg)
         else:
             await message.channel.send('💤 Денежные операции временно недоступны')
@@ -411,7 +413,7 @@ async def bingpups(message):
             await message.channel.send(embed=embed)     
     elif (('чет' in words[0]) or ('нечет' in words[0])):     
         if "чет " in msg:
-            if heroku:
+            if bank:
                 if len(words) == 2 and words[1].isdigit():
                     if int(words[1]) <= users['users'][str(message.author.id)]['money']:
                         if int(words[1]) >= 0:
@@ -497,6 +499,8 @@ async def bingpups(message):
             pickle.dump(vectorizer, f0)
     else:
         saybing = 'бинпап' if 'бинпап' in msg else 'нет бинпапа' #Упоминается ли Бинпап?
+        if 'бинпапа' in msg:
+            return
         msg = clean(msg)
         parasite = ['бинпап', 'эй ', ' и ', ' в ', 'как бы', 'собственно говорят', 'аким образом', 'буквально', 'прямо', 'как говорится', 'так далее', 'скажем', 'ведь', 'как его', 'в натуре', 'так вот', 'короче', 'как сказать', 'видишь', 'слышишь', 'типа', 'на самом деле', 'вообще', 'в общем-то', 'в общем', 'в некотором роде', 'на фиг', 'на хрен', 'в принципе']
         parasite.extend(['итак', 'типа того', 'только', 'вот', 'в самом деле', 'данет', 'все такое', 'в целом', 'то есть', 'это', 'это само', 'еешкин кот', 'ну', 'ну вот', 'ну это', 'прикинь', 'прикол', 'значит', 'так сказать', 'понимаешь', 'допустим', 'слушай', 'например', 'просто', 'конкретно', 'да ладно', 'блин', 'походу', 'а-а-а', 'э-э-э', 'не вопрос', 'без проблем', 'практически', 'фактически', 'как-то так', 'ничего себе','пожалуйста'])
