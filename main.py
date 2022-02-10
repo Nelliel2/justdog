@@ -21,6 +21,7 @@ from sklearn.model_selection import train_test_split
 from pymorphy2 import MorphAnalyzer
 import pickle
 import asyncio
+from PIL import Image
 
 intents = discord.Intents.all()
 bank = False
@@ -274,7 +275,7 @@ async def bingpups(message):
             offset = datetime.timedelta(hours=3)
             tz = datetime.timezone(offset, name='МСК')
             now = datetime.datetime.now(tz=tz)
-            replace_values = {'$mentioned[1, yes]': human, '$authorID': humanauthor, '$randomUser': people, ' $message': m, '$angry': angmsg, '$username': people, '$random[0, 24]': randint(0,23), '$random[0, 60]': randint(0,60), '$random[0, 100]': randint(0,100), '$data': now.strftime('%d-%m-%Y %H:%M:%S')}
+            replace_values = {'$mentioned[1, yes]': human, '$authorID': humanauthor, '$randomUser': people, ' $message': m, '$message': m, '$angry': angmsg, '$username': people, '$random[0, 24]': randint(0,23), '$random[0, 60]': randint(0,60), '$random[0, 100]': randint(0,100), '$data': now.strftime('%d-%m-%Y %H:%M:%S')}
             for i, j in replace_values.items(): 
                 answer = answer.replace(i, str(j))
         return answer 
@@ -285,12 +286,51 @@ async def bingpups(message):
                     if int(price[i]) <= int(users['users'][str(humanid)]['money']):
                         if 'реклам' in msg:
                             state['bingpup']['ad'] = msg.replace('купить реклама ', '')
+                        if 'расклад' in msg:
+                            await taro()
+                            file = discord.File('Build\\Collage.png')
+                            answer= message.author.mention + '... Вижу, вижу!'
+                            await message.channel.send(answer, file=file)
                         await add_var(users,str(message.author.id),'money',-int(price[i]))
                         await message.add_reaction('✅')
                         break
                     else:
                         await message.channel.send('❌ Недостаточно средств')
                         break
+    async def taro():
+        cards = ['Build\\1.png', 'Build\\2.png', 'Build\\3.png']
+        colms = 3
+        thumbnail_width = 356 #509
+        thumbnail_height = 591 #845
+        size = thumbnail_width, thumbnail_height
+        ims = []
+        ints=[]
+        new_im = Image.open('Build\\table2.jpg').convert('RGBA')
+        while len(ims) < len(cards): #выбор и поврот карт
+            x = randint(0, 2)
+            if x not in ints:
+                ints.append(x)
+                im = Image.open(cards[x]).convert('RGBA')
+                im.thumbnail(size)
+                if len(ims) == 2:
+                    im = im.rotate(randint(-10,-5), expand=True)
+                else: 
+                    im = im.rotate(randint(-10,10), expand=True)
+                ims.append(im)
+        i = 0
+        x = 1700
+        y = 50
+        for i in range(colms): #создание картинки
+            print(i, x, y)
+            im = ims[i]
+            new_im.paste(im, (x, y),mask=im)
+            y += 300 + randint(3,10)
+            x += -thumbnail_width+ randint(10,20)+40
+            x += -40 if i==1 else 0
+            y += 100 if i==1 else 0
+        new_im.save("Build\\Collage.png")
+        ims.clear()
+        ints.clear()
 
     await update_data(users,str(message.author.id))      
     await subtract_state()
