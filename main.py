@@ -44,7 +44,7 @@ async def bingpups(message):
     humanid = message.author.id
     human = message.author.mention
     humanauthor = message.author.mention
-    msg = str(message.content).replace('\n', ' ').lower()
+    msg = str(message.content).replace('\n', ' ').replace('ё', 'е').lower()
     msg = msg.replace(',', '')
     words = re.findall(r'\w+', msg)
     guild = bot.guilds[0]
@@ -500,6 +500,13 @@ async def bingpups(message):
         for i in range(len(alphabet)):
             answer = answer.replace(alphabet[i],coelum[i])
         await message.channel.send(answer)
+    elif ('хто я' in msg):
+        await message.add_reaction('<:pyro:942842826633379841>')
+        await message.add_reaction('<:hydro:942842826981527592>')
+        await message.add_reaction('<:anemo:942842826746658957>')
+        await message.add_reaction('<:electro:942842826994114690>')
+        await message.add_reaction('<:cryo:942842827048620122>')
+        await message.add_reaction('<:geo:942842827019255840>')
     elif ('бинпап что ты умеешь' in msg or 'бинпап help' in msg or 'что умеет бинпап' in msg):
         description = ':pencil: **Знаю команды** :pencil:\n• тапки/носок\n• фас/фу\n• лежать/стоять/бежать/служить/домой\n• дай лапу\n• умри\n• голос\n• ешь/кусай\n• скажи [текст]\n• найди [вещь]\n• принеси [вещь]\n• лови [вещь]\n• обними/согрей\n• в бой\n• к руке/к ноге\n• спать\n• завари чай\n• дай пендаль\n• похвали\n• гулять\n*и другое...*\n\n'
         description += ':crystal_ball: **Подскажу** :crystal_ball:\n• с коэлум/на коэлум [текст]\n• [что-то] или [что-то]\n• кого съедят ирисы\n• зачем/почему \n• где/куда\n• когда\n• кто\n• чьё\n• напомни\n• сколько\n• вероятность\n• возраст\n• цвет\n• дата сегодня\n•что такое [слово]/окей бинпап [вопрос]\n\n'
