@@ -41,12 +41,13 @@ async def on_ready():
 async def bingpups(message):
     if message.author == bot.user or message.author.bot:
         return
+    msg = str(message.content).replace('\n', ' ').replace('ё', 'е').lower().replace(',', '')
+    words = re.findall(r'\w+', msg)
+    if len(words)==0:
+        return
     humanid = message.author.id
     human = message.author.mention
     humanauthor = message.author.mention
-    msg = str(message.content).replace('\n', ' ').replace('ё', 'е').lower()
-    msg = msg.replace(',', '')
-    words = re.findall(r'\w+', msg)
     guild = bot.guilds[0]
     membs = message.author.guild.members
     people = choice(membs)
