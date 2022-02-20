@@ -270,7 +270,7 @@ async def bingpups(message):
             else:
                 for word in BOT_CONFIG2['intents'][intent]['examples']:
                     m = m.replace(word, '')
-            replace_values = {' я ': 'ты ', 'бинпап': 'я', 'тебе': 'Бинпапу', 'мне': 'тебе', 'твой': 'Бинпапа', 'мой': 'твой', 'эй ': ''}
+            replace_values = {' я ': 'ты ', 'бинпап': 'я', 'тебе': 'Бинпапу', 'мне': 'тебе', 'твой': 'Бинпапа', 'мой': 'твой', 'эй ': '', 'меня': 'ты'}
             for i, j in replace_values.items(): 
                 m = m.replace(i, str(j))
             offset = datetime.timedelta(hours=3)
