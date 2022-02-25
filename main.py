@@ -624,7 +624,7 @@ async def bingpups(message):
                         answer = random.choice(BOT_CONFIG['intents'][intent]['sadness'])
                         angmsg = users['users'][str(message.author.id)]['angmsg'] 
                         await message.channel.send(edit(answer, humanauthor, human, msg, people, angmsg))
-                        if BOT_CONFIG['intents'][intent]['double'] != ('joy' or 'hunger' or 'healf' or 'clean'):
+                        if BOT_CONFIG['intents'][intent]['double'] == ('joy' or 'hunger' or 'healf' or 'clean'):
                                 await add_state(BOT_CONFIG['intents'][intent]['double'])
                                 await equate_var(users,str(message.author.id),'oldmsg','')
                                 await add_var(users,str(message.author.id),'bing',1)
