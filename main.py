@@ -48,7 +48,6 @@ async def bingpups(message):
     humanid = message.author.id
     human = message.author.mention
     humanauthor = message.author.mention
-    guild = bot.guilds[0]
     membs = message.author.guild.members
     people = choice(membs)
     variants = {}
@@ -453,7 +452,7 @@ async def bingpups(message):
             embed = discord.Embed(description=f'❌ Укажите число и единицу времени', color=0xff0000)
             await message.channel.send(embed=embed)     
     elif (('чет' in words[0]) or ('нечет' in words[0])):     
-        if "чет " in msg:
+        if ('чет ' in msg) and (len(msg)<4):
             if bank:
                 if len(words) == 2 and words[1].isdigit():
                     if int(words[1]) <= users['users'][str(message.author.id)]['money']:
@@ -547,7 +546,7 @@ async def bingpups(message):
             pickle.dump(vectorizer, f0)
     else:
         saybing = 'бинпап' if 'бинпап' in msg else 'нет бинпапа' #Упоминается ли Бинпап?
-        if 'бинпапа' in msg:
+        if 'бинпапов' in msg:
             return
         msg = clean(msg)
         parasite = ['бинпап', 'эй ', ' и ', ' в ', 'как бы', 'собственно говорят', 'аким образом', 'буквально', 'прямо', 'как говорится', 'так далее', 'скажем', 'ведь', 'как его', 'в натуре', 'так вот', 'короче', 'как сказать', 'видишь', 'слышишь', 'типа', 'на самом деле', 'вообще', 'в общем-то', 'в общем', 'в некотором роде', 'на фиг', 'на хрен', 'в принципе']
