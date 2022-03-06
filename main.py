@@ -306,7 +306,7 @@ async def bingpups(message):
             x = randint(0, 21)
             if x not in ints:
                 ints.append(x)
-                im = Image.open('taro\\' + str(x) + '.png').convert('RGBA')
+                im = Image.open(str(x) + '.png').convert('RGBA')
                 im.thumbnail(size)
                 if len(ims) == 2:
                     im = im.rotate(randint(-10,-5), expand=True)
@@ -324,7 +324,7 @@ async def bingpups(message):
             x += -thumbnail_width+ randint(10,20)+40
             x += -40 if i==1 else 0
             y += 100 if i==1 else 0
-        new_im.save("Build\\Collage.png")
+        new_im.save("Collage.png")
         ims.clear()
     await update_data(users,str(message.author.id))      
     await subtract_state()
@@ -362,7 +362,7 @@ async def bingpups(message):
         await taro(ints)
         humanid = str(humanchange(humanid, msg))
         human = '<@' + humanid + '>'
-        file = discord.File('Build\\Collage.png')
+        file = discord.File('Collage.png')
         answer = human + '... Вижу, вижу!'
         await message.channel.send(answer, file=file)
         answer = ''
