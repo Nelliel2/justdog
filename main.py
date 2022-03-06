@@ -24,7 +24,7 @@ import asyncio
 from PIL import Image
 
 intents = discord.Intents.all()
-bank = False
+bank = True
 load_dotenv()
 bot = commands.Bot(command_prefix='!', intents=intents)
 OKgoogle = ['что такое', 'окей бинпап']
@@ -286,11 +286,6 @@ async def bingpups(message):
                     if int(price[i]) <= int(users['users'][str(humanid)]['money']):
                         if 'реклам' in msg:
                             state['bingpup']['ad'] = msg.replace('купить реклама ', '')
-                        if 'расклад' in msg:
-                            await taro()
-                            file = discord.File('Build\\Collage.png')
-                            answer= message.author.mention + '... Вижу, вижу!'
-                            await message.channel.send(answer, file=file)
                         await add_var(users,str(message.author.id),'money',-int(price[i]))
                         await message.add_reaction('✅')
                         break
@@ -298,19 +293,18 @@ async def bingpups(message):
                         await message.channel.send('❌ Недостаточно средств')
                         break
     async def taro():
-        cards = ['Build\\1.png', 'Build\\2.png', 'Build\\3.png']
         colms = 3
         thumbnail_width = 356 #509
         thumbnail_height = 591 #845
         size = thumbnail_width, thumbnail_height
         ims = []
         ints=[]
-        new_im = Image.open('Build\\table2.jpg').convert('RGBA')
-        while len(ims) < len(cards): #выбор и поврот карт
-            x = randint(0, 2)
+        new_im = Image.open('table.jpg').convert('RGBA')
+        while len(ims) < 3: #выбор и поврот карт
+            x = randint(0, 21)
             if x not in ints:
                 ints.append(x)
-                im = Image.open(cards[x]).convert('RGBA')
+                im = Image.open('taro\\' + str(x) + '.png').convert('RGBA')
                 im.thumbnail(size)
                 if len(ims) == 2:
                     im = im.rotate(randint(-10,-5), expand=True)
@@ -364,6 +358,11 @@ async def bingpups(message):
         else:
             embed = discord.Embed(description=f'❌ Скажите ваше желание', color=0xff0000)
         await message.channel.send(embed=embed)
+    elif (('таро' in msg and 'бинпап' in msg) or ('расклад для' in msg)):
+        await taro()
+        file = discord.File('Build\\Collage.png')
+        answer= message.author.mention + '... Вижу, вижу!'
+        await message.channel.send(answer, file=file)
     elif ('в колодец' in msg):  
         if bank:
             if len(words) >= 3 and words[3].isdigit():
@@ -420,7 +419,6 @@ async def bingpups(message):
         embed = discord.Embed(title='Магазин :convenience_store:', description= f':frame_photo: {shop[0]} (в профиле) — {price[0]} :dollar:', color=0xff0000)
         embed.set_footer(text='Напишите: "Купить..."', icon_url=message.author.avatar_url)
         await message.channel.send(embed=embed)
-        await message.author.profile
     elif ('купить' in words[0]):   
         if bank:
             await sell(msg)
@@ -550,7 +548,7 @@ async def bingpups(message):
             return
         msg = clean(msg)
         parasite = ['бинпап', 'эй ', ' и ', ' в ', 'как бы', 'собственно говорят', 'аким образом', 'буквально', 'прямо', 'как говорится', 'так далее', 'скажем', 'ведь', 'как его', 'в натуре', 'так вот', 'короче', 'как сказать', 'видишь', 'слышишь', 'типа', 'на самом деле', 'вообще', 'в общем-то', 'в общем', 'в некотором роде', 'на фиг', 'на хрен', 'в принципе']
-        parasite.extend(['итак', 'типа того', 'только', 'вот', 'в самом деле', 'данет', 'все такое', 'в целом', 'то есть', 'это', 'это само', 'еешкин кот', 'ну', 'ну вот', 'ну это', 'прикинь', 'прикол', 'значит', 'так сказать', 'понимаешь', 'допустим', 'слушай', 'например', 'просто', 'конкретно', 'да ладно', 'блин', 'походу', 'а-а-а', 'э-э-э', 'не вопрос', 'без проблем', 'практически', 'фактически', 'как-то так', 'ничего себе','пожалуйста'])
+        parasite.extend(['итак', 'кстати', 'значит', 'типа того', 'только', 'вот', 'в самом деле', 'данет', 'все такое', 'в целом', 'то есть', 'это', 'это само', 'еешкин кот', 'ну', 'ну вот', 'ну это', 'прикинь', 'прикол', 'значит', 'так сказать', 'понимаешь', 'допустим', 'слушай', 'например', 'просто', 'конкретно', 'да ладно', 'блин', 'походу', 'а-а-а', 'э-э-э', 'не вопрос', 'без проблем', 'практически', 'фактически', 'как-то так', 'ничего себе','пожалуйста'])
         for i in range(len(parasite)):
             msg = msg.replace(parasite[i],'') 
         words = re.findall(r'\w+', msg)
