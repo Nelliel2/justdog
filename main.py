@@ -24,7 +24,7 @@ import asyncio
 from PIL import Image
 
 intents = discord.Intents.all()
-bank = True
+bank = False
 load_dotenv()
 bot = commands.Bot(command_prefix='!', intents=intents)
 OKgoogle = ['что такое', 'окей бинпап']
@@ -51,11 +51,14 @@ async def bingpups(message):
     membs = message.author.guild.members
     people = choice(membs)
     variants = {}
+    ints=[]
     num = re.findall(r'\d+', msg)
     with open('lvl.json', 'r', encoding='utf-8') as f:
         users = json.load(f)
     with open('state.json', 'r', encoding='utf-8') as f4:
         state = json.load(f4)
+    with open('taro.json', 'r', encoding='utf-8') as t:
+        tarodis = json.load(t)
     with open('BOT_CONFIG.json', 'r', encoding='utf-8') as f2:
         BOT_CONFIG = json.load(f2)
     with open('BOT_CONFIG2.json', 'r', encoding='utf-8') as f3:
@@ -292,13 +295,12 @@ async def bingpups(message):
                     else:
                         await message.channel.send('❌ Недостаточно средств')
                         break
-    async def taro():
+    async def taro(ints):
         colms = 3
         thumbnail_width = 356 #509
         thumbnail_height = 591 #845
         size = thumbnail_width, thumbnail_height
         ims = []
-        ints=[]
         new_im = Image.open('table.jpg').convert('RGBA')
         while len(ims) < 3: #выбор и поврот карт
             x = randint(0, 21)
@@ -324,8 +326,6 @@ async def bingpups(message):
             y += 100 if i==1 else 0
         new_im.save("Build\\Collage.png")
         ims.clear()
-        ints.clear()
-
     await update_data(users,str(message.author.id))      
     await subtract_state()
     await on_ping(message)
@@ -359,10 +359,20 @@ async def bingpups(message):
             embed = discord.Embed(description=f'❌ Скажите ваше желание', color=0xff0000)
         await message.channel.send(embed=embed)
     elif (('таро' in msg and 'бинпап' in msg) or ('расклад для' in msg)):
-        await taro()
+        await taro(ints)
+        humanid = str(humanchange(humanid, msg))
+        human = '<@' + humanid + '>'
         file = discord.File('Build\\Collage.png')
-        answer= message.author.mention + '... Вижу, вижу!'
+        answer = human + '... Вижу, вижу!'
         await message.channel.send(answer, file=file)
+        answer = ''
+        for i in range(0,3):
+            answer += tarodis[str(ints[i])] + '\n'
+        ints.clear()
+        embed = discord.Embed(title='Описание карт 🃏', description=answer, color=0xff0000)
+        tarologs = [users['users'][str(726066980427268097)]['name'], users['users'][str(700223724607242240)]['name']]
+        embed.set_footer(text=f'🔮 За подробностями обращайтесь к тарологам: {tarologs[0]}, {tarologs[1]} ! 🔮') 
+        await message.channel.send(embed=embed)
     elif ('в колодец' in msg):  
         if bank:
             if len(words) >= 3 and words[3].isdigit():
