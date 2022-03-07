@@ -22,9 +22,8 @@ from pymorphy2 import MorphAnalyzer
 import pickle
 import asyncio
 from PIL import Image
-
 intents = discord.Intents.all()
-bank = False
+bank = True
 load_dotenv()
 bot = commands.Bot(command_prefix='!', intents=intents)
 OKgoogle = ['что такое', 'окей бинпап']
@@ -45,6 +44,7 @@ async def bingpups(message):
     words = re.findall(r'\w+', msg)
     if len(words)==0:
         return
+    
     humanid = message.author.id
     human = message.author.mention
     humanauthor = message.author.mention
@@ -312,11 +312,14 @@ async def bingpups(message):
                     im = im.rotate(randint(-10,-5), expand=True)
                 else: 
                     im = im.rotate(randint(-10,10), expand=True)
+                turn = randint(0,4)
+                if turn == 0:
+                    im = im.rotate(180, expand=True)
                 ims.append(im)
         i = 0
         x = 1700
-        y = 50
-        for i in range(colms): #создание картинки
+        y = 50      
+        for i in range(colms): #создание картинки 
             print(i, x, y)
             im = ims[i]
             new_im.paste(im, (x, y),mask=im)
@@ -358,21 +361,25 @@ async def bingpups(message):
         else:
             embed = discord.Embed(description=f'❌ Скажите ваше желание', color=0xff0000)
         await message.channel.send(embed=embed)
-    elif (('таро' in msg and 'бинпап' in msg) or ('расклад для' in msg)):
-        await taro(ints)
-        humanid = str(humanchange(humanid, msg))
-        human = '<@' + humanid + '>'
-        file = discord.File('Collage.png')
-        answer = human + '... Вижу, вижу!'
-        await message.channel.send(answer, file=file)
-        answer = ''
-        for i in range(0,3):
-            answer += tarodis[str(ints[i])] + '\n'
-        ints.clear()
-        embed = discord.Embed(title='Описание карт 🃏', description=answer, color=0xff0000)
-        tarologs = [users['users'][str(726066980427268097)]['name'], users['users'][str(700223724607242240)]['name']]
-        embed.set_footer(text=f'🔮 За подробностями обращайтесь к тарологам: {tarologs[0]}, {tarologs[1]} ! 🔮') 
-        await message.channel.send(embed=embed)
+    elif (('таро' in msg and 'бинпап' in msg) or ('расклад для' in msg) and (len(msg)<4)):
+        if round(time.time(),2) - state['bingpup']['t'] < 10:
+            await message.channel.send('Бинпап еще анализирует предыдущий расклад!')
+        else:
+            await taro(ints)
+            humanid = str(humanchange(humanid, msg))
+            human = '<@' + humanid + '>'
+            file = discord.File('Collage.png')
+            answer = human + '... Вижу, вижу!'
+            await message.channel.send(answer, file=file)
+            answer = ''
+            for i in range(0,3):
+                answer += tarodis[str(ints[i])] + '\n'
+            ints.clear()
+            embed = discord.Embed(title='Описание карт 🃏', description=answer, color=0xff0000)
+            tarologs = [users['users'][str(726066980427268097)]['name'], users['users'][str(700223724607242240)]['name'], users['users'][str(661545813138341919)]['name'], users['users'][str(456701198003601409)]['name'], users['users'][str(783253719026368523)]['name']]
+            embed.set_footer(text=f'🔮 За подробностями обращайтесь к одному из тарологов: {tarologs[0]}, {tarologs[1]}, {tarologs[2]}, {tarologs[3]} и {tarologs[4]}! 🔮') 
+            await message.channel.send(embed=embed)
+            state['bingpup']['t']=round(time.time(),2)
     elif ('в колодец' in msg):  
         if bank:
             if len(words) >= 3 and words[3].isdigit():
@@ -460,7 +467,7 @@ async def bingpups(message):
             embed = discord.Embed(description=f'❌ Укажите число и единицу времени', color=0xff0000)
             await message.channel.send(embed=embed)     
     elif (('чет' in words[0]) or ('нечет' in words[0])):     
-        if ('чет ' in msg) and (len(msg)<4):
+        if (('чет ' in msg) and (len(msg)<4)):
             if bank:
                 if len(words) == 2 and words[1].isdigit():
                     if int(words[1]) <= users['users'][str(message.author.id)]['money']:
@@ -554,7 +561,7 @@ async def bingpups(message):
             pickle.dump(vectorizer, f0)
     else:
         saybing = 'бинпап' if 'бинпап' in msg else 'нет бинпапа' #Упоминается ли Бинпап?
-        if 'бинпапов' in msg:
+        if ('бинпапов' in msg or 'бинподенег' in msg):
             return
         msg = clean(msg)
         parasite = ['бинпап', 'эй ', ' и ', ' в ', 'как бы', 'собственно говорят', 'аким образом', 'буквально', 'прямо', 'как говорится', 'так далее', 'скажем', 'ведь', 'как его', 'в натуре', 'так вот', 'короче', 'как сказать', 'видишь', 'слышишь', 'типа', 'на самом деле', 'вообще', 'в общем-то', 'в общем', 'в некотором роде', 'на фиг', 'на хрен', 'в принципе']
