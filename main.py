@@ -23,7 +23,7 @@ import pickle
 import asyncio
 from PIL import Image
 intents = discord.Intents.all()
-bank = True
+bank = False
 load_dotenv()
 bot = commands.Bot(command_prefix='!', intents=intents)
 OKgoogle = ['что такое', 'окей бинпап']
