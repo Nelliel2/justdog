@@ -576,7 +576,7 @@ async def bingpups(message):
             answer = random.choice(BOT_CONFIG2['intents'][intent]['responses'])
             if intent == 'random': #случайное число
                 if len(num) == 2:
-                    answer += str(randint(int(num[0]), int(num[1])))
+                    answer += str(randint((int(num[0])),(int(num[1]))))
                 elif len(num) == 1:
                     answer += str(randint(0, int(num[0])))
                 else:
