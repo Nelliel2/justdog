@@ -44,7 +44,7 @@ async def bingpups(message):
     words = re.findall(r'\w+', msg)
     if len(words)==0:
         return
-    
+ 
     humanid = message.author.id
     human = message.author.mention
     humanauthor = message.author.mention
