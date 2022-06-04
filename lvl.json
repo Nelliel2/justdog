@@ -1244,6 +1244,25 @@
             "seconds2": 0,
             "seconds3": 0,
             "seconds4": 0
+        },
+        "872183203086094396": {
+            "name": "\u043c\u044f\u043e",
+            "exp": 0,
+            "lvl": 1,
+            "bing": 0,
+            "money": 0,
+            "angry": 0,
+            "wife": "\u2014",
+            "master": "\u2014",
+            "servants": "\u2014",
+            "angmsg": "",
+            "oldmsg": "",
+            "remember": "",
+            "seconds0": 0,
+            "seconds1": 0,
+            "seconds2": 0,
+            "seconds3": 0,
+            "seconds4": 0
         }
     }
 }
