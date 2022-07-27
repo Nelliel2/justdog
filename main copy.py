@@ -56,7 +56,7 @@ async def bingpups(message):
     with open('lvl.json', 'r', encoding='utf-8') as f:
         users = json.load(f)
     with open('state.json', 'r', encoding='utf-8') as f4:
-        state = json.load(f4)
+        fstate = json.load(f4)
     with open('taro.json', 'r', encoding='utf-8') as t:
         tarodis = json.load(t)
     with open('BOT_CONFIG.json', 'r', encoding='utf-8') as f2:
@@ -94,12 +94,11 @@ async def bingpups(message):
     async def bot_add_state(var):
         value = randint(5,10)
         if (state(var) + value < 100):
-            state['bingpup'][var] += value
+            fstate['bingpup'][var] += value
             if ((state('sad') == 1) and (state('clean') >= 60) and (state('hunger') >= 60) and (state('healf') >= 60) and (state('joy') >= 60)):
-                state['bingpup']['sad'] = 0
+                fstate['bingpup']['sad'] = 0
         else:
-            state['bingpup'][var] = 100
-
+            fstate['bingpup'][var] = 100
     async def on_ping(message):
         if message.mention_everyone:
             return
@@ -277,7 +276,7 @@ async def bingpups(message):
                 answer = answer.replace(i, str(j))
         return answer 
     def state(char):
-        return state['bingpup'][char]
+        return fstate['bingpup'][char]
     def answer(intent):
         return random.choice(BOT_CONFIG['intents'][intent]['rancor' if users['users'][str(message.author.id)]['angry'] > 3 else 'sadness' if state('sad') == 1 else 'responses'])
     def answer(intent, type):
@@ -285,21 +284,21 @@ async def bingpups(message):
     def answer2(intent, type):
         return random.choice(BOT_CONFIG2['intents'][intent][type])
     async def bot_subtract_state():
-        if (time.time() - state['bingpup']['time'] > 21600):
-            state['bingpup']['time'] = round(time.time(),2)
-            state['bingpup']['clean'] -= randint(3,10)
-            state['bingpup']['hunger'] -= randint(3,10)
-            state['bingpup']['healf'] -= randint(3,10)
-            state['bingpup']['joy'] -= randint(3,10)
-            if ((state['bingpup']['sad'] == 0) and ((state['bingpup']['clean'] <= 60) or (state['bingpup']['hunger'] <= 60) or (state['bingpup']['hunger'] <= 60) or (state['bingpup']['joy'] <= 60))):
-                state['bingpup']['sad'] = 1
+        if time.time() - state('time') > 21600:
+            fstate['bingpup']['time'] = round(time.time(),2)
+            fstate['bingpup']['clean'] -= randint(3,10)
+            fstate['bingpup']['hunger'] -= randint(3,10)
+            fstate['bingpup']['healf'] -= randint(3,10)
+            fstate['bingpup']['joy'] -= randint(3,10)
+            if ((fstate['bingpup']['sad'] == 0) and ((fstate['bingpup']['clean'] <= 60) or (fstate['bingpup']['hunger'] <= 60) or (fstate['bingpup']['hunger'] <= 60) or (fstate['bingpup']['joy'] <= 60))):
+                fstate['bingpup']['sad'] = 1
     async def sell(msg):
         if any(word in msg for word in shop):
             for i in range (0,len(shop)):
                 if shop[i] in msg:
                     if int(price[i]) <= int(users['users'][str(humanid)]['money']):
                         if 'реклам' in msg:
-                            state['bingpup']['ad'] = msg.replace('купить реклама ', '')
+                            fstate['bingpup']['ad'] = msg.replace('купить реклама ', '')
                         await user_add_var(users,str(message.author.id),'money',-int(price[i]))
                         await message.add_reaction('✅')
                         break
@@ -373,7 +372,7 @@ async def bingpups(message):
             embed = discord.Embed(description=f'❌ Скажите ваше желание', color=0xff0000)
         await message.channel.send(embed=embed)
     elif (('таро' in msg and 'бинпап' in msg) or ('расклад для' in msg) and (len(msg)<4)):
-        if round(time.time(),2) - state['bingpup']['t'] < 10:
+        if round(time.time(),2) - fstate['bingpup']['t'] < 10:
             await message.channel.send('Бинпап еще анализирует предыдущий расклад!')
         else:
             await taro(ints)
@@ -390,7 +389,7 @@ async def bingpups(message):
             tarologs = [users['users'][str(726066980427268097)]['name'], users['users'][str(700223724607242240)]['name'], users['users'][str(661545813138341919)]['name'], users['users'][str(456701198003601409)]['name'], users['users'][str(783253719026368523)]['name']]
             embed.set_footer(text=f'🔮 За подробностями обращайтесь к одному из тарологов: {tarologs[0]}, {tarologs[1]}, {tarologs[2]}, {tarologs[3]} и {tarologs[4]}! 🔮') 
             await message.channel.send(embed=embed)
-            state['bingpup']['t']=round(time.time(),2)
+            fstate['bingpup']['t']=round(time.time(),2)
     elif ('в колодец' in msg):  
         if bank:
             if len(words) >= 3 and words[3].isdigit():
@@ -438,7 +437,7 @@ async def bingpups(message):
         you = message.author if int(message.author.id)==int(humanid) else message.mentions[0]
         description = f'Ник: {human} ('+str(you.name)+')\nАккаунт создан: '+str(you.created_at)[:10]+'\nЖена: '+users['users'][humanid]['wife']+'\nХозяин: '+users['users'][humanid]['master']+'\nСлуги: '+users['users'][humanid]['servants']+'\nХарактеристики:\n'+str(users['users'][humanid]['lvl'])+' 🏆 '+str(users['users'][humanid]['exp'])+' ⏳ '+str(users['users'][humanid]['money'])+' 💵 '+str(users['users'][humanid]['bing'])+' 🐶\nИнвентарь:\n*пусто~*'
         embed = discord.Embed(title='Бинпрофиль 🌈', description=description, color=you.color)
-        ad = state['bingpup']['ad']
+        ad = fstate['bingpup']['ad']
         embed.set_thumbnail(url=you.avatar_url) 
         embed.set_footer(text=f'💵 Реклама: "{ad}" 💵!') 
         embed.set_image(url='https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif')
@@ -599,8 +598,11 @@ async def bingpups(message):
                     i += 1   
                 await message.channel.send(random.choice([answer, msg.replace(answer + ' или ', '', 1), f'*совещается с {people}*']))
             
-            await user_equate_var(users,str(message.author.id),'oldmsg',msg)
-            intent = botic(msg)
+            await user_equate_var(str(message.author.id),'oldmsg',msg)
+            if len(words) > 0:
+                intent = botic(msg)
+            else:
+                intent = 'gav'
             double = answer(intent, 'double')
             if user_return_var(str(message.author.id),'oldmsg') == msg:
                 await answer('repead') 
@@ -641,7 +643,7 @@ async def bingpups(message):
             await user_add_lvl(users,str(message.author.id))
             await user_equate_var(users,str(message.author.id),'name',message.author.name)
     with open('state.json', 'w') as f4:
-        json.dump(state,f4, indent=4)
+        json.dump(fstate,f4, indent=4)
     with open('lvl.json', 'w') as f:
         json.dump(users,f, indent=4)
     await bot.process_commands(message)
