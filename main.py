@@ -23,7 +23,7 @@ import pickle
 import asyncio
 from PIL import Image
 intents = discord.Intents.all()
-bank = False
+bank = True
 load_dotenv()
 bot = commands.Bot(command_prefix='!', intents=intents)
 OKgoogle = ['что такое', 'окей бинпап']
@@ -48,6 +48,7 @@ async def bingpups(message):
     humanid = message.author.id
     human = message.author.mention
     humanauthor = message.author.mention
+    guild = bot.guilds[0]
     membs = message.author.guild.members
     people = choice(membs)
     variants = {}
@@ -467,7 +468,7 @@ async def bingpups(message):
             embed = discord.Embed(description=f'❌ Укажите число и единицу времени', color=0xff0000)
             await message.channel.send(embed=embed)     
     elif (('чет' in words[0]) or ('нечет' in words[0])):     
-        if (('чет ' in msg) and (len(msg)<4)):
+        if (('чет ' in msg) and (len(words)<4)):
             if bank:
                 if len(words) == 2 and words[1].isdigit():
                     if int(words[1]) <= users['users'][str(message.author.id)]['money']:

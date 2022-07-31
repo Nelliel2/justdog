@@ -44,7 +44,6 @@ async def bingpups(message):
     words = re.findall(r'\w+', msg)
     if len(words)==0:
         return
- 
     humanid = message.author.id
     human = message.author.mention
     humanauthor = message.author.mention
@@ -277,9 +276,9 @@ async def bingpups(message):
         return answer 
     def state(char):
         return fstate['bingpup'][char]
-    def answer(intent):
+    def answer0(intent):
         return random.choice(BOT_CONFIG['intents'][intent]['rancor' if users['users'][str(message.author.id)]['angry'] > 3 else 'sadness' if state('sad') == 1 else 'responses'])
-    def answer(intent, type):
+    def answer1(intent, type):
         return random.choice(BOT_CONFIG['intents'][intent][type])
     def answer2(intent, type):
         return random.choice(BOT_CONFIG2['intents'][intent][type])
@@ -586,8 +585,8 @@ async def bingpups(message):
             blacklist = ['сказал', 'тогда']
             for i in range(len(blacklist)): #ЧерныйСписок
                 if blacklist[i] in msg: 
-                    await message.channel.send(answer('gav')) 
-                    await message.channel.send(answer('bingpup'))
+                    await message.channel.send(answer0('gav')) 
+                    await message.channel.send(answer0('bingpup'))
                     return   
             if 'или' in msg:
                 words = re.findall(r'\w+', msg)
@@ -599,13 +598,11 @@ async def bingpups(message):
                 await message.channel.send(random.choice([answer, msg.replace(answer + ' или ', '', 1), f'*совещается с {people}*']))
             
             await user_equate_var(str(message.author.id),'oldmsg',msg)
-            if len(words) > 0:
-                intent = botic(msg)
-            else:
-                intent = 'gav'
-            double = answer(intent, 'double')
+
+            intent = botic(msg)
+            double = answer1(intent, 'double')
             if user_return_var(str(message.author.id),'oldmsg') == msg:
-                await answer('repead') 
+                answer0('repead') 
                 return 
             if intent == 'evil': #добавить злость
                 user_add_var(str(message.author.id),'angry',1)
@@ -616,29 +613,28 @@ async def bingpups(message):
                 elif user_return_var(str(message.author.id),'angry') == 1: 
                     user_equate_var(str(message.author.id),'angmsg','я на тебя не злюсь')
             if double == 'embed':  
-                embed = discord.Embed(description=edit(answer, humanauthor, human, msg, people), color=0xff0000, title=answer(intent, 'title'))
-                embed.set_image(url=answer(intent, 'responses2'))  
+                embed = discord.Embed(description=edit(answer, humanauthor, human, msg, people), color=0xff0000, title=answer0(intent, 'title'))
+                embed.set_image(url=answer1(intent, 'responses2'))  
                 if intent == 'remember':
                     await user_equate_var(users,str(message.author.id),'remember',msg.replace('напомни ',''))
                 await message.channel.send(embed=embed)
-            else: #обычное сообщение
-                sendmessage = await message.channel.send(edit(answer(intent), humanauthor, human, msg, people, ""))   
-                if double == ('reactions' or 'reactions&responses2'): #реакция
-                    await message.add_reaction(answer(intent, 'reactions')) 
-                elif double == ('responses2' or 'reactions&responses2'): #второе сообщение
-                    await message.channel.send(edit(answer(intent, 'responses2') , humanauthor, human, msg, people))
-                elif double != ('none' or 'change'): #убавить грусть
-                    await bot_add_state(double)
-                    await user_equate_var(users,str(message.author.id),'oldmsg','')
-                    await user_add_var(users,str(message.author.id),'bing',1)
-                if answer(intent, 'time') > 0: #время 
-                        answer = answer(intent, 'responses2') 
-                        await asyncio.sleep(answer(intent, 'time')) 
-                        if double == 'change':
-                            await sendmessage.edit(content=edit(answer, humanauthor, human, msg, people))
-                        else:
-                            await message.channel.send(answer)
-            await message.channel.send(answer('bingpup'))
+            sendmessage = await message.channel.send(edit(answer0(intent), humanauthor, human, msg, people, ""))   
+            if double == ('reactions' or 'reactions&responses2'): #реакция
+                await message.add_reaction(answer1(intent, 'reactions')) 
+            elif double == ('responses2' or 'reactions&responses2'): #второе сообщение
+                await message.channel.send(edit(answer1(intent, 'responses2') , humanauthor, human, msg, people))
+            elif double != ('none' or 'change'): #убавить грусть
+                await bot_add_state(double)
+                await user_equate_var(users,str(message.author.id),'oldmsg','')
+                await user_add_var(users,str(message.author.id),'bing',1)
+            if answer1(intent, 'time') > 0: #время 
+                    answer = answer1(intent, 'responses2') 
+                    await asyncio.sleep(answer1(intent, 'time')) 
+                    if double == 'change':
+                        await sendmessage.edit(content=edit(answer, humanauthor, human, msg, people))
+                    else:
+                        await message.channel.send(answer)
+            await message.channel.send(answer0('bingpup'))
             await user_add_var(users,str(message.author.id),'exp',1)
             await user_add_lvl(users,str(message.author.id))
             await user_equate_var(users,str(message.author.id),'name',message.author.name)
