@@ -302,12 +302,12 @@ async def bingpups(message):
         thumbnail_height = 591 #845
         size = thumbnail_width, thumbnail_height
         ims = []
-        new_im = Image.open('table.jpg').convert('RGBA')
+        new_im = Image.open('content/table.jpg').convert('RGBA')
         while len(ims) < 3: #выбор и поврот карт
             x = randint(0, 21)
             if x not in ints:
                 ints.append(x)
-                im = Image.open(str(x) + '.png').convert('RGBA')
+                im = Image.open('content/' + str(x) + '.png').convert('RGBA')
                 im.thumbnail(size)
                 if len(ims) == 2:
                     im = im.rotate(randint(-10,-5), expand=True)
@@ -328,7 +328,7 @@ async def bingpups(message):
             x += -thumbnail_width+ randint(10,20)+40
             x += -40 if i==1 else 0
             y += 100 if i==1 else 0
-        new_im.save("Collage.png")
+        new_im.save("content/Collage.png")
         ims.clear()
     await update_data(users,str(message.author.id))      
     await subtract_state()
@@ -369,7 +369,7 @@ async def bingpups(message):
             await taro(ints)
             humanid = str(humanchange(humanid, msg))
             human = '<@' + humanid + '>'
-            file = discord.File('Collage.png')
+            file = discord.File('content/Collage.png')
             answer = human + '... Вижу, вижу!'
             await message.channel.send(answer, file=file)
             answer = ''
