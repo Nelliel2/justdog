@@ -32,9 +32,14 @@ price = ['10000']
 alphabet =['. ',' ','а','б','в','г','д','е','ё','ж','з','и','й','к','л','м','н','о','п','р','с','т','у','ф','х','ц','ч','ш','щ','ъ','ы','ь','э','ю','я']
 coelum = ['\n','.','એ ','બી ','વી ','જી ','ಎ ','ನ್ ','ም ','რ ','ഞാ ','უ ','ए ','ਡੀ ','అ ','ຂ້ ','າ ','ພ ','ຈົ້ ','ໂ ','Մ ','ভি ','এ ','র ','დ ',' ტ ','ლ ','ಲ್ ','ದು ','ຖ ','ບໍ່ ','ਹੈ ','ਬੀ ','എ ','मैं ']
 
+
 @bot.event
 async def on_ready():
     print('Бинпап в полном порядке!')
+    morning = ['Бинпап снова с вами!', 'Я проснулся!', 'Всем доброе утро!', 'Готов гавкать целый день!', 'Я вернулся из царства грёз!']
+    my_channel = bot.get_channel(778933279654936597)
+    await my_channel.send(random.choice(morning)) 
+
 
 @bot.listen('on_message')
 async def bingpups(message):
@@ -44,7 +49,6 @@ async def bingpups(message):
     words = re.findall(r'\w+', msg)
     if len(words)==0:
         return
- 
     humanid = message.author.id
     human = message.author.mention
     humanauthor = message.author.mention
@@ -54,16 +58,19 @@ async def bingpups(message):
     variants = {}
     ints=[]
     num = re.findall(r'\d+', msg)
+    with open('BOT_CONFIG.json', 'r', encoding='utf-8') as f2:
+        BOT_CONFIG = json.load(f2)
     with open('lvl.json', 'r', encoding='utf-8') as f:
         users = json.load(f)
     with open('state.json', 'r', encoding='utf-8') as f4:
         state = json.load(f4)
     with open('taro.json', 'r', encoding='utf-8') as t:
         tarodis = json.load(t)
-    with open('BOT_CONFIG.json', 'r', encoding='utf-8') as f2:
-        BOT_CONFIG = json.load(f2)
     with open('BOT_CONFIG2.json', 'r', encoding='utf-8') as f3:
         BOT_CONFIG2 = json.load(f3)
+
+
+
     async def update_data(users,user):
         if not user in users['users']:
             users['users'][user] = {}
@@ -411,6 +418,10 @@ async def bingpups(message):
                             users['users'][humanid]['money'] = int(num[0] if num[0] !=humanid else num[1]) + int(users['users'][humanid]['money'])
                             users['users'][humanauthorid]['money'] = int(users['users'][humanauthorid]['money']) - int(num[0] if num[0] !=humanid else num[1])
                             embed = discord.Embed(description=f'{int(num[0] if num[0] !=humanid else num[1])} 💸 {human}', color=0xff0000, title='Переведено')
+                            if humanid == '569641898420076554' and int(num[0] if num[0] !=humanid else num[1]) == 50000:
+                                if people['users'][humanauthorid]['money'] == 0:
+                                   people['users'][humanauthorid]['money'] = 50000
+                                   embed = discord.Embed(description=f'{int(num[0] if num[0] !=humanid else num[1])} 🪙 <@{humanauthorid}>', color=0xff0000, title='Зачислено')
                         else:
                             embed = discord.Embed(description=f'❌ Минимальная сумма перевода 1 💵', color=0xff0000)
                     else:
@@ -422,6 +433,8 @@ async def bingpups(message):
                 await message.channel.send('💤 Денежные операции временно недоступны')
     elif ('профиль' in words[0]):
         if 'бпрофиль' in words[0]:
+            return
+        if 'магопрофиль' in words[0]:
             return
         humanid = str(humanchange(humanid, msg))
         human = '<@' + humanid + '>'
@@ -683,6 +696,7 @@ async def bingpups(message):
         json.dump(state,f4, indent=4)
     with open('lvl.json', 'w') as f:
         json.dump(users,f, indent=4)
+
     await bot.process_commands(message)
 
 bot.run(os.getenv('BOT_TOKEN'))
