@@ -27,7 +27,7 @@ async def add_state(key):
         print('error in state')
 
 async def update_state():
-    if (time.time() - return_state('time') > 21600):
+    if (time.time() - return_state('time') > 61600):
         await rewrite_state('time', round(time.time(),2))
         await change_state('clean', -randint(3,10))
         await change_state('hunger', -randint(3,10))
