@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from talk import *
 from commands import *
 #from NewYear import *
-from Halloween import *
+#from Halloween import *
 
 load_dotenv()
 
@@ -15,7 +15,7 @@ async def on_ready():
     print('Бинпап в полном порядке!')
     morning = ['Бинпап снова с вами!', 'Я проснулся!', 'Всем доброе утро!', 'Готов гавкать целый день!', 'Я вернулся из царства грёз!']
     my_channel = bot.get_channel(778933279654936597)
-    await my_channel.send(random.choice(morning)) 
+    #await my_channel.send(random.choice(morning)) 
 
 @bot.event
 async def on_member_join(member):

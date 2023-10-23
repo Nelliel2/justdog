@@ -393,21 +393,21 @@ async def bingpup(message):
                 await message.channel.send(embed=embed)
             else:
                 await message.channel.send('💤 Денежные операции временно недоступны')
-    elif ('профиль' in words[0]):
-        if 'бпрофиль' in words[0]:
-            return
-        if 'магопрофиль' in words[0]:
-            return
-        humanID = str(humanchange(humanID, msg))
-        human = '<@' + humanID + '>'
-        you = message.author if int(message.author.id)==int(humanID) else message.mentions[0]
-        description = f'Ник: {human} ('+str(you.name)+')\nАккаунт создан: '+str(you.created_at)[:10]+'\nЖена: '+users['users'][humanID]['wife']+'\nХозяин: '+users['users'][humanID]['master']+'\nСлуги: '+users['users'][humanID]['servants']+'\nХарактеристики:\n'+str(users['users'][humanID]['lvl'])+' 🏆 '+str(users['users'][humanID]['exp'])+' ⏳ '+str(users['users'][humanID]['money'])+' 💵 '+str(users['users'][humanID]['bing'])+' 🐶\nИнвентарь:\n*пусто~*'
-        embed = discord.Embed(title='Бинпрофиль 🌈', description=description, color=you.color)
-        ad = return_state('ad')
-        embed.set_thumbnail(url=you.avatar_url) 
-        embed.set_footer(text=f'💵 Реклама: "{ad}" 💵!') 
-        embed.set_image(url='https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif')
-        await message.channel.send(embed=embed)
+    # elif ('профиль' in words[0]):
+    #     if 'бпрофиль' in words[0]:
+    #         return
+    #     if 'магопрофиль' in words[0]:
+    #         return
+    #     humanID = str(humanchange(humanID, msg))
+    #     human = '<@' + humanID + '>'
+    #     you = message.author if int(message.author.id)==int(humanID) else message.mentions[0]
+    #     description = f'Ник: {human} ('+str(you.name)+')\nАккаунт создан: '+str(you.created_at)[:10]+'\nЖена: '+users['users'][humanID]['wife']+'\nХозяин: '+users['users'][humanID]['master']+'\nСлуги: '+users['users'][humanID]['servants']+'\nХарактеристики:\n'+str(users['users'][humanID]['lvl'])+' 🏆 '+str(users['users'][humanID]['exp'])+' ⏳ '+str(users['users'][humanID]['money'])+' 💵 '+str(users['users'][humanID]['bing'])+' 🐶\nИнвентарь:\n*пусто~*'
+    #     embed = discord.Embed(title='Бинпрофиль 🌈', description=description, color=you.color)
+    #     ad = return_state('ad')
+    #     embed.set_thumbnail(url=you.avatar_url) 
+    #     embed.set_footer(text=f'💵 Реклама: "{ad}" 💵!') 
+    #     embed.set_image(url='https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif')
+    #     await message.channel.send(embed=embed)
     elif ('магазин' in words[0]):    
         embed = discord.Embed(title='Магазин :convenience_store:', description= f':frame_photo: {shop[0]} (в профиле) — {price[0]} :dollar:\n🌷 {shop[1]} — {price[1]} :dollar: \n🐈 {shop[2]} — {price[2]} :dollar:', color=0xff0000)
         embed.set_footer(text='Напишите: "Купить..."', icon_url=message.author.avatar_url)
