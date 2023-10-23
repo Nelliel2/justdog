@@ -482,12 +482,12 @@ async def bingpup(message):
     elif ('бинбон' in words[0]):    
         await message.channel.send("Бинбона больше нет! Говори сразу чет/нечет!")
     elif ('с коэлум' in msg):
-        answer = str(message.content).replace('с коэлум ','') + ' '
+        answer = str(message.content).replace('с коэлум ','').replace('на коэлум ','').replace('бинпап, ','').replace('бинпап ','') + ' '
         for i in range(len(alphabet)):
             answer = answer.replace(coelum[i],alphabet[i])
         await message.channel.send(answer)
     elif ('на коэлум' in msg):
-        answer = str(message.content).lower().replace('на коэлум ','')
+        answer = str(message.content).lower().replace('на коэлум ','').replace('бинпап, ','').replace('бинпап ','')
         for i in range(len(alphabet)):
             answer = answer.replace(alphabet[i],coelum[i])
         await message.channel.send(answer)
@@ -551,6 +551,7 @@ async def bingpup(message):
         saybing = 'бинпап' if 'бинпап' in msg else 'нет бинпапа' #Упоминается ли Бинпап?
         if ('бинпапов' in msg or 'бинподенег' in msg):
             return
+        mess = msg.replace('бинпап', '')
         msg = clean(msg)
         parasite = ['бинпап', 'эй ', ' и ', ' в ', 'как бы', 'собственно говорят', 'аким образом', 'буквально', 'прямо', 'как говорится', 'так далее', 'скажем', 'ведь', 'как его', 'в натуре', 'так вот', 'короче', 'как сказать', 'видишь', 'слышишь', 'типа', 'на самом деле', 'вообще', 'в общем-то', 'в общем', 'в некотором роде', 'на фиг', 'на хрен', 'в принципе']
         parasite.extend(['итак', 'кстати', 'значит', 'типа того', 'только', 'вот', 'в самом деле', 'данет', 'все такое', 'в целом', 'то есть', 'это', 'это само', 'еешкин кот', 'ну', 'ну вот', 'ну это', 'прикинь', 'прикол', 'значит', 'так сказать', 'понимаешь', 'допустим', 'слушай', 'например', 'просто', 'конкретно', 'да ладно', 'блин', 'походу', 'а-а-а', 'э-э-э', 'не вопрос', 'без проблем', 'практически', 'фактически', 'как-то так', 'ничего себе','пожалуйста'])
@@ -597,13 +598,9 @@ async def bingpup(message):
                     return
             await add_lvl(str(message.author.id))
             if 'или' in msg:
-                words = re.findall(r'\w+', msg)
-                answer = words[0]
-                i = 1
-                while 'или' != words[i]:
-                    answer += " " + words[i]
-                    i += 1   
-                await message.channel.send(random.choice([answer, msg.replace(answer + ' или ', '', 1), f'*совещается с {people}*']))
+                print(mess)
+                answer = mess.split('или')
+                await message.channel.send(random.choice([answer[0], answer[1], f'*совещается с {people}*']))
             elif len(words) > 0:
                 if return_user(authorID, 'oldmsg') != msg:
                     await rewrite_user(str(message.author.id),'oldmsg',msg)
