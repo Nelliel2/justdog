@@ -25,16 +25,19 @@ async def bingpupic(message):
         roleName = message.author.top_role.name    
     except:
         roleName = 'пользователь'
-    try: 
-        await update_data(people,message.mentions[0])  
-    except:
-        print("ytdf")
+
 
     if len(words)==0:
         return
  
     with open('Halloween.json', 'r', encoding='utf-8') as p:
         people = json.load(p)
+
+    def checkAdmin(role = roleName):
+        print(role)
+        if (role == "святые и грешники"): return True
+        else: return False
+        
 
     def checkGame(role = roleName):
         if (role == "мёртвые"): return True
@@ -71,7 +74,7 @@ async def bingpupic(message):
         if not str(user.id) in people['users']:
             people['users'][user.id] = {}
             people['users'][user.id]['name'] = str(user.name)
-            if checkAlive():
+            if checkAlive(user.top_role.name):
                 people['users'][user.id]['candy'] = 1
                 people['users'][user.id]['pumpkin'] = 0
             else:
@@ -83,6 +86,11 @@ async def bingpupic(message):
             people['users'][user.id]['told'] = []
 
     await update_data(people,message.author)
+
+    try: 
+        await update_data(people,message.mentions[0])  
+    except:
+        ctoto = 123
 
     async def add_var(user,var,value):
         people['users'][user][var] += value
@@ -177,7 +185,7 @@ async def bingpupic(message):
 
     if ('добавить историю' in msg):
         # try:
-            answer = str(message.content).replace(words[len(words)-1], '').replace('бинтинка', '')
+            answer = str(message.content).replace(words[len(words)-1], '').replace('добавить историю', '')
             if len(message.attachments) > 0:
                 userid = str(message.author.id)
                 msg = str(message.content)
@@ -234,6 +242,22 @@ async def bingpupic(message):
         embed.set_image(url='https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif')
         await message.channel.send(embed=embed)
 
+    elif ('добавить' in words[0]):
+        if checkAdmin():
+            if ('тыкву' in words[2]):
+                await add_var(str(message.mentions[0].id),'pumpkin', int(words[1]))
+                await message.channel.send("Сделано!")
+            elif ('конфету' in words[2]):
+                await add_var(str(message.mentions[0].id),'candy', int(words[1]))
+                await message.channel.send("Сделано!")
+    elif ('убрать' in words[0]):
+        if checkAdmin():
+            if ('тыкву' in words[2]):
+                await add_var(str(message.mentions[0].id),'pumpkin', -int(words[1]))
+                await message.channel.send("Сделано!")
+            elif ('конфету' in words[2]):
+                await add_var(str(message.mentions[0].id),'candy', -int(words[1]))
+                await message.channel.send("Сделано!")
 
     with open('Halloween.json', 'w') as p:
         json.dump(people,p, indent=4)
