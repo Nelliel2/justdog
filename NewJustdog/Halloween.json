@@ -1,86 +1,12 @@
 {
     "users": {
-        "540593371597766673": {
-            "name": "nellvid",
-            "candy": 1,
-            "pumpkin": 0,
-            "debuff": "\u2014"
-        },
-        "598445468476768257": {
-            "name": "flor.",
-            "candy": 0,
-            "pumpkin": 1,
-            "debuff": "\u2014"
-        },
-        "698556142078525451": {
-            "name": "silkworm.",
-            "candy": 0,
-            "pumpkin": 1,
-            "debuff": "\u2014"
-        },
-        "584013283154198533": {
-            "name": "mad_cat89",
-            "candy": 0,
-            "pumpkin": 1,
-            "debuff": "\u2014"
-        },
-        "661545813138341919": {
-            "name": "polemi",
-            "candy": 0,
-            "pumpkin": 1,
-            "debuff": "\u2014"
-        },
-        "543016290164670464": {
-            "name": "alcagliostro",
-            "candy": 0,
-            "pumpkin": 1,
-            "debuff": "\u2014"
-        },
-        "400601861435949068": {
-            "name": "_xielian_",
-            "candy": 0,
-            "pumpkin": 1,
-            "debuff": "\u2014"
-        },
-        "464563507904380938": {
-            "name": "ermineco",
-            "candy": 0,
-            "pumpkin": 1,
-            "debuff": "\u2014"
-        },
-        "700223724607242240": {
-            "name": "dushnila_samurai",
-            "candy": 0,
-            "pumpkin": 1,
-            "debuff": "\u2014",
-            "told": []
-        },
-        "153205648014835713": {
-            "name": "cottlete",
-            "candy": 0,
-            "pumpkin": 1,
-            "debuff": "\u2014",
-            "told": []
-        },
-        "871656519589040158": {
-            "name": "\u0415\u0441\u0442\u044c \u043e\u0434\u043d\u0430 \u043d\u0430\u0433\u0440\u0430\u0434\u0430 \u2014 \u0441\u043c\u0435\u0440\u0442\u044c.",
-            "candy": 0,
-            "pumpkin": 1,
-            "debuff": "\u2014",
-            "told": []
-        },
-        "726066980427268097": {
-            "name": "xiuya",
-            "candy": 0,
-            "pumpkin": 1,
-            "debuff": "\u2014",
-            "told": []
-        },
         "676132084628062208": {
             "name": "\u0411\u043e\u0433\u0430\u0442\u044b\u0439 \u041d\u0435\u043b\u043b",
             "candy": 0,
             "pumpkin": 1,
             "debuff": "\u2014",
+            "text": "",
+            "file": false,
             "told": []
         }
     }

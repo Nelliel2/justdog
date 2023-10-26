@@ -21,34 +21,37 @@ async def bingpupic(message):
         return
     msg = str(message.content).replace('\n', ' ').replace('ё', 'е').lower().replace(',', '')
     words = re.findall(r'\w+', msg)
+    try: 
+        roleName = message.author.top_role.name    
+    except:
+        roleName = 'пользователь'
+    try: 
+        await update_data(people,message.mentions[0])  
+    except:
+        print("ytdf")
+
     if len(words)==0:
         return
  
     with open('Halloween.json', 'r', encoding='utf-8') as p:
         people = json.load(p)
 
-
-    def checkAlive():
-        if (message.author.top_role.name == "мёртвые"): return False
-        if (message.author.top_role.name == "живые?"): return True
-        return False
-
-    async def update_data(people,user):
-        if not str(user.id) in people['users']:
-            people['users'][user.id] = {}
-            people['users'][user.id]['name'] = str(user.name)
-            if checkAlive():
-                people['users'][user.id]['candy'] = 1
-                people['users'][user.id]['pumpkin'] = 0
-            else:
-                people['users'][user.id]['candy'] = 0
-                people['users'][user.id]['pumpkin'] = 1               
-            people['users'][user.id]['debuff'] = '\u2014'
-            people['users'][user.id]['told'] = []
+    def checkGame(role = roleName):
+        if (role == "мёртвые"): return True
+        elif (role == "живые?"): return True
+        else: return False
 
 
-    await update_data(people,message.author)
+    def checkAlive(role = roleName):
+        if (role == "мёртвые"): return False
+        if (role == "живые?"): return True
 
+    def check(reaction, user):
+        if user == message.author and str(reaction.emoji) == '❤️':
+            return True and user
+        elif user == message.author and str(reaction.emoji) == '🖤':
+            return True and user
+        
     def humanchange(humanid, msg):
         if ('@' in msg):
             humanid = ''
@@ -62,40 +65,81 @@ async def bingpupic(message):
                     if msg[i] == '>':
                         break
                     humanid += msg[i]
-            print(humanid)
-        return humanid
-   
-    async def add_var(people,user,var,value):
+        return humanid          
+
+    async def update_data(people,user):
+        if not str(user.id) in people['users']:
+            people['users'][user.id] = {}
+            people['users'][user.id]['name'] = str(user.name)
+            if checkAlive():
+                people['users'][user.id]['candy'] = 1
+                people['users'][user.id]['pumpkin'] = 0
+            else:
+                people['users'][user.id]['candy'] = 0
+                people['users'][user.id]['pumpkin'] = 1               
+            people['users'][user.id]['debuff'] = '\u2014'
+            people['users'][user.id]['text'] = ''
+            people['users'][user.id]['file'] = False
+            people['users'][user.id]['told'] = []
+
+    await update_data(people,message.author)
+
+    async def add_var(user,var,value):
         people['users'][user][var] += value
 
+    async def add_to_arr(user,var,value):
+        people['users'][user][var].append(value)
 
-    def check(reaction, user):
-        if user == message.author and str(reaction.emoji) == '❌':
-            return '❌' and user
-        elif user == message.author and str(reaction.emoji) == '❌':
-            return '❌' and user
-        elif user == message.author and str(reaction.emoji) == '❌':
-            return '❌' and user
-        elif user == message.author and str(reaction.emoji) == '❌':
-            return '❌' and user
+    async def change_var(user,var,value):
+        people['users'][user][var] = value
+    
+    def return_var(user,var):
+        return people['users'][user][var]
 
     async def story():
         you = message.author
-        #description = f'Текст истории'
-        #embed = discord.Embed(title='История 🕸️', description=description, color=you.color) 
-        embed = discord.Embed(color=you.color) 
-        embed.set_author(name = str(you.name), icon_url=you.avatar_url)
-        embed.set_footer(text=f'история для {message.mentions[0].name}', icon_url=message.mentions[0].avatar_url)
+        description = return_var(str(message.mentions[0].id),'text')
+        embed = discord.Embed(description=description, color=message.mentions[0].color) 
+
+        # embed.set_author(name = str(message.mentions[0].name), icon_url=message.mentions[0].avatar_url)
+        # embed.set_footer(text=f'история для {you.name}', icon_url=you.avatar_url)
+
+        embed.set_author(name = f'история для {str(you.name)}', icon_url=you.avatar_url)
+        embed.set_footer(text=f'от {message.mentions[0].name}', icon_url=message.mentions[0].avatar_url)
 
         sendmessage = await message.channel.send(embed=embed)      
 
-        emoji = ['🤣','❤️','💔'] if (checkAlive()) else ['😱','❤️','💔'] 
+        emoji = ['❤️','🖤'] 
+
         for i in emoji:
             await sendmessage.add_reaction(i)
-            reaction, user = await bot.wait_for('reaction_add', check=check)
+        reaction, user = await bot.wait_for('reaction_add', check=check)
 
-
+        if (str(reaction.emoji) == '❤️'):
+            await message.channel.send(f'{you.mention} и {message.mentions[0].mention} мирно разошлись')
+        elif (str(reaction.emoji) == '🖤'):
+            emojiLoss = '🍬' if checkAlive() else '🎃'
+            varLoss = 'candy' if checkAlive() else 'pumpkin'
+            await add_var(str(message.mentions[0].id), varLoss, -1)
+            await message.channel.send(f'-1 {emojiLoss} у {message.mentions[0].mention}')
         
+        await add_to_arr(str(you.id),'told', message.mentions[0].id)
+        
+    async def notStory():
+        you = message.author
+        embed = discord.Embed(color=you.color) 
+        emojiLoss = '🎃' if checkAlive() else '🍬'
+        varLoss = 'pumpkin' if checkAlive() else 'candy'
+
+        embed.set_author(name = f'{emojiLoss} для {str(you.name)}', icon_url=you.avatar_url)
+        embed.set_footer(text=f'от {message.mentions[0].name}', icon_url=message.mentions[0].avatar_url)
+        
+        await add_var(str(message.mentions[0].id), varLoss, -1)
+        await add_var(str(you.id), varLoss, 1)
+
+        await message.channel.send(f'-1 {emojiLoss} у {message.mentions[0].mention}')
+        
+        await add_to_arr(str(you.id),'told', message.mentions[0].id)
 
     # def check(reaction, user):
     #         emoji = ['⬅', '➡']
@@ -123,47 +167,77 @@ async def bingpupic(message):
     #         n = 0 if n == len(stock) else n-1
     #         sendmessage.edit(embed=stock(n)) 
 
-    async def addrole():
-        member = message.author
-        guild = bot.guilds[0]
-        role = guild.get_role(1046779916756189274)
-        print(role)
-        await member.add_roles(role)
-        
+    # async def addrole():
+    #     member = message.author
+    #     guild = bot.guilds[0]
+    #     role = guild.get_role(1046779916756189274)
+    #     print(role)
+    #     await member.add_roles(role)
 
-    if ('рассказать' in words[0]): 
-        if (len(message.mentions) != 0):  
-            await story()
+
+    if ('добавить историю' in msg):
+        # try:
+            answer = str(message.content).replace(words[len(words)-1], '').replace('бинтинка', '')
+            if len(message.attachments) > 0:
+                userid = str(message.author.id)
+                msg = str(message.content)
+
+                await message.attachments[0].save(f'content/'+ userid +'.png')
+                # file = discord.File('content/valentine.png')
+
+                await change_var(userid,'file', True)
+                await change_var(userid,'text', msg)
+                # await user.send(answer, file=file)
+            else:
+                # await user.send(answer)
+                userid = str(message.author.id)
+                msg = str(message.content)
+                
+                await change_var(userid,'file', False)
+                await change_var(userid,'text', msg)
+
+            await message.author.send('Я всё записал!')
+        # except:
+        #     if len(answer)==0:
+        #         await message.author.send('Я не могу отправить пустоту, у меня лапки(((')
+        #     else:
+        #         await message.author.send('Что-то пошло не так!')
+
+
+    if ('сладость' in words[0] and 'или' in words[1] and 'гадость' in words[2]) or ('гадость' in words[0] and 'или' in words[1] and 'сладость' in words[2]) : 
+        if (checkGame()):
+            if (len(message.mentions) != 0) and (checkAlive() != checkAlive(message.mentions[0].top_role.name)) and (checkGame(message.mentions[0].top_role.name)):  
+                if not (message.mentions[0].id in return_var(str(message.author.id),'told')): 
+                    var = 'pumpkin' if checkAlive() else 'candy'
+                    if (return_var(str(message.mentions[0].id), var) > 0):
+                        await notStory()
+                    else:
+                        await story()
+                else:
+                    await message.channel.send(f'{message.author.mention}, вы уже подходили к этому cуществу')              
+            else:
+                textAlive = "мёртвое" if checkAlive() else "живое"          
+                await message.channel.send(f'{message.author.mention}, упомяните {textAlive} cущество')          
         else:
-            textAlive = "мёртвое" if checkAlive() else "живое"          
-            await message.channel.send(f'{message.author.mention}, упомяните {textAlive} cущество')          
+            await message.channel.send(f'{message.author.mention}, вы не участвуете в ивенте')          
 
-    elif ('гринготтс счет' in msg):
-        humanid = str(humanchange(message.author.id, msg))
-        human = '<@' + humanid + '>'
-        money = people['users'][humanid]['money']
-        embed = discord.Embed(description=f'Баланс {human}: {money} галеонов :coin:', color=0xff0000)
-        await message.channel.send(embed=embed)
-
-    elif ('профиль' in words[0]):
-        await update_data(people,message.author)
+    elif ('профиль' in words[0]):   
         humanid = str(humanchange(message.author.id, msg))
         humanid = str(humanchange(humanid, msg))
         human = '<@' + humanid + '>'
         you = message.author if int(message.author.id)==int(humanid) else message.mentions[0]
+        textAlive = "живой" if checkAlive(you.top_role.name) else "мёртвый"    
 
-        description = f'**Имя:** {human} ('+str(you.name)+') '+'\n**Состояние:** __'+str(you.roles[1])+'__\n\n '+str(people['users'][humanid]['candy']) +' 🍬      '+str(people['users'][humanid]['pumpkin'])+' 🎃 \n '
+        description = f'**Имя:** {human} ('+str(you.name)+') '+'\n**Состояние:** __'+textAlive+'__\n\n '+str(people['users'][humanid]['candy']) +' 🍬      '+str(people['users'][humanid]['pumpkin'])+' 🎃 \n '
         embed = discord.Embed(title='Профиль 🕸️', description=description, color=you.color) 
         embed.set_thumbnail(url=you.avatar_url) 
         embed.set_image(url='https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif')
         await message.channel.send(embed=embed)
-    
-
-
 
 
     with open('Halloween.json', 'w') as p:
         json.dump(people,p, indent=4)
+
     await bot.process_commands(message)
 
 

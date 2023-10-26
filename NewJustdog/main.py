@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from talk import *
 from commands import *
 #from NewYear import *
-#from Halloween import *
+from Halloween import *
 
 load_dotenv()
 
