@@ -3,3 +3,4 @@ Old fiels/
 .env
 Collage.png
 NewJustdog/__pycache__
+*.pyc
