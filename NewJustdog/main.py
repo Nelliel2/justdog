@@ -1,7 +1,7 @@
 
-from discord.ext import commands
+from discord.ext import commands #Добавить установление
 import os
-from dotenv import load_dotenv
+from dotenv import load_dotenv #Добавить установление
 from talk import *
 from commands import *
 #from NewYear import *
