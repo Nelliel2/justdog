@@ -42,20 +42,72 @@ async def bingpupic(message):
     price = [pMetla, pFamiliar, pMantia, pWand, pElexir, pCat]
     allI = {0: 'car', 1: 'animal', 2: 'coat', 3: 'wand', 4: 'stock', 5: 'cat'}
 
+    attackSpells = ['атака1', 'атака2', 'атака3']
+    protectiveSpells = ['защита1', 'защита2']
+
     with open('NewYear.json', 'r', encoding='utf-8') as p:
         people = json.load(p)
-    async def update_data(people,user):
-        if not str(user.id) in people['users']:
-            people['users'][user.id] = {}
-            people['users'][user.id]['name'] = str(user.name)
-            people['users'][user.id]['money'] = 50000
-            people['users'][user.id]['wand'] = '\u2014'
-            people['users'][user.id]['coat'] = '\u2014'
-            people['users'][user.id]['car'] = '\u2014'
-            people['users'][user.id]['animal'] = '\u2014'
-            people['users'][user.id]['stock'] = ''
-            people['users'][user.id]['cat'] = ''
-    await update_data(people,message.author)
+    with open('Duel.json', 'r', encoding='utf-8') as p:
+        duel = json.load(p)
+
+    async def update_data(userID, author_name):
+        if not str(userID) in people['users']:
+            people['users'][userID] = {}
+            people['users'][userID]['name'] = author_name
+            people['users'][userID]['money'] = 50000
+            people['users'][userID]['wand'] = '\u2014'
+            people['users'][userID]['coat'] = '\u2014'
+            people['users'][userID]['car'] = '\u2014'
+            people['users'][userID]['animal'] = '\u2014'
+            people['users'][userID]['stock'] = ''
+            people['users'][userID]['cat'] = ''
+            people['users'][userID]['spending'] = 0
+
+
+    async def update_duel(userID):
+        if not str(userID) in duel['users']:
+            duel['users'][userID] = {}
+            duel['users'][userID]['hp'] = 100
+            duel['users'][userID]['attackSpells'] = []
+            duel['users'][userID]['protectiveSpells'] = []
+            duel['users'][userID]['win'] = []
+            duel['users'][userID]['losing'] = []
+            duel['users'][userID]['duelist'] = ''
+
+    
+    await update_data(message.author.id, message.author.name)
+    await update_duel(message.author.id)        
+
+    async def clear_duel(userID):
+        duel['users'][userID]['hp'] = 100
+        duel['users'][userID]['attackSpells'] = []
+        duel['users'][userID]['protectiveSpells'] = []
+        duel['users'][userID]['duelist'] = ''
+        
+
+    async def add_spell( userID, spell, attackSpells = True):
+        if attackSpells:
+            duel['users'][userID]['attackSpells'].append(spell)
+        else:
+            duel['users'][userID]['protectiveSpells'].append(spell)
+    
+    async def edit_var(userID, var, value):
+        duel['users'][userID][var] = value
+
+    def return_var(userID, var):
+        return duel['users'][userID][var]
+    
+    def return_duelist(userID):
+        return duel['users'][userID]['duelist']
+
+    async def damage(duelist):
+        await add_var(duelist, 'hp', -random.randint(15,20))
+
+    async def heat(user, duelist, spell):
+        await damage(duelist)
+        await add_spell(user, spell)
+        
+
 
     def humanchange(humanid, msg):
         if ('@' in msg):
@@ -73,21 +125,22 @@ async def bingpupic(message):
             print(humanid)
         return humanid
    
-    def check(reaction, user):
+    def check(reaction, userID):
         emoji = ['✅', '❌']
-        if user == message.author and str(reaction.emoji) in emoji:
+        if userID == message.author and str(reaction.emoji) in emoji:
             ind = emoji.index(reaction.emoji)
             return str(reaction.emoji) and message.author 
    
     async def sell(msg):
-        user = str(msg.author.id)
+        userID = str(msg.author.id)
         msg = str(msg.content)
         for j in range (0,len(shop)):
             for i in range (0,len(shop[j])):
                 if shop[j][i] in msg:
-                    if int(price[j][i]) <= int(people['users'][user]['money']):
-                        if people['users'][user][allI[j]] != '\u2014' and allI[j]!='stock' and allI[j]!='cat':
-                            embed = discord.Embed(content = f'{message.author.mention}', description= f'Вы уверены, что хотите купить "' + shop[j][i] + '"?\n Оно займёт место "' + people['users'][user][allI[j]]+'".', color=0xff0000)
+                    if int(price[j][i]) <= int(people['users'][userID]['money']):
+                        # Подтверждение покупки
+                        if people['users'][userID][allI[j]] != '\u2014' and allI[j]!='stock' and allI[j]!='cat':
+                            embed = discord.Embed(content = f'{message.author.mention}', description= f'Вы уверены, что хотите купить "' + shop[j][i] + '"?\n Оно займёт место "' + people['users'][userID][allI[j]]+'".', color=0xff0000)
                             sendmessage = await message.channel.send(embed=embed)
                             await sendmessage.add_reaction('✅')
                             await sendmessage.add_reaction('❌')
@@ -96,27 +149,32 @@ async def bingpupic(message):
                                 await message.add_reaction('❌')
                                 return
                         elif allI[j]=='stock':
-                            people['users'][user][allI[j]] += '⚗・' + shop[j][i] + '\n'
-                            await add_var(people,user,'money',-int(price[j][i]))
+                            people['users'][userID][allI[j]] += '⚗・' + shop[j][i] + '\n'
+                            await spend_money(people,userID, int(price[j][i]))
                             await message.add_reaction('✅')
                             return
                         elif allI[j]=='cat':
-                            people['users'][user][allI[j]] += ':cat2:・' + shop[j][i] + '\n'
-                            await add_var(people,user,'money',-int(price[j][i]))
+                            people['users'][userID][allI[j]] += ':cat2:・' + shop[j][i] + '\n'
+                            await spend_money(people,userID, int(price[j][i]))
                             await message.add_reaction('✅')
                             return
-                        people['users'][user][allI[j]] = shop[j][i] 
-                        await add_var(people,user,'money',-int(price[j][i]))
+                        people['users'][userID][allI[j]] = shop[j][i] 
+                        await spend_money(people, userID, int(price[j][i]))
                         await message.add_reaction('✅')
                     else:
                         await message.channel.send('❌ Недостаточно средств')
                         return
-    async def add_var(people,user,var,value):
-        people['users'][user][var] += value
+    
+    async def spend_money(people,userID,value):
+        people['users'][userID]['money'] -= value
+        people['users'][userID]['spending'] += value
 
-    async def toCoin(user):
-        if people['users'][user]['money'] == 0:
-            people['users'][user]['money'] = 50000
+    async def add_var(people,userID,var,value):
+        people['users'][userID][var] += value
+
+    async def toCoin(userID):
+        if people['users'][userID]['money'] == 0:
+            people['users'][userID]['money'] = 50000
             
     # def check(reaction, user):
     #         emoji = ['⬅', '➡']
@@ -144,13 +202,58 @@ async def bingpupic(message):
     #         n = 0 if n == len(stock) else n-1
     #         sendmessage.edit(embed=stock(n)) 
 
-    async def addrole():
-        member = message.author
-        guild = bot.guilds[0]
-        role = guild.get_role(1046779916756189274)
-        print(role)
-        await member.add_roles(role)
+    # async def addrole():
+    #     member = message.author
+    #     guild = bot.guilds[0]
+    #     role = guild.get_role(1046779916756189274)
+    #     print(role)
+    #     await member.add_roles(role)
+
+    # elif ('удалитьdddd' in msg):
+    # await message.delete()
+    # await addrole()
+    # print('deleted')
+
+    def checkDuel(reaction, user):
+        emoji = ['✅', '❌']
+        if user in message.mentions and str(reaction.emoji) in emoji:
+            return str(reaction.emoji) and message.mentions[0] 
+
+    if ('дуэль' in words[0]):   
+        if len(message.mentions) == 0:
+            embed = discord.Embed(description=f'❌ Упомяните существо, которое вы хотите вызвать на дуэль', color=0xff0000)
+            await message.channel.send(embed=embed)
+            return
         
+        #в других местах тоэе в стринг переделать
+        userID = str(message.author.id)
+        duelistID = str(message.mentions[0].id)
+
+        if return_duelist(duelistID) != '' or return_duelist(userID) != '':
+            embed = discord.Embed(description=f'❌ Нельзя вести сразу несколько дуэлей', color=0xff0000)
+            await message.channel.send(embed=embed)
+            return
+        else:
+            await edit_var(userID, 'duelist', duelistID)
+            await edit_var(duelistID, 'duelist', userID)
+
+            embed = discord.Embed(description=f'{message.author.name} вызывает {message.mentions[0].name} на дуэль', color=0xff0000)
+            sendmessage =  await message.channel.send(embed=embed)
+            await sendmessage.add_reaction('✅')
+            await sendmessage.add_reaction('❌')
+            reaction, userok = await bot.wait_for('reaction_add', check=checkDuel)
+            
+            if reaction == '❌':
+                embed = discord.Embed(description=f'{message.author.name}, {message.mentions[0].name} отклонил ваше предложение', color=0xff0000)
+                await message.channel.send(embed=embed)
+                return
+            if reaction == '✅':
+                embed = discord.Embed(description=f'Начинается дуэль между {message.author.name} и {message.mentions[0].name} отклонил ваше предложение', color=0xff0000)
+                await message.channel.send(embed=embed)
+        
+            
+
+
     if ('купить' in words[0]):   
         await sell(message)
 
@@ -176,13 +279,14 @@ async def bingpupic(message):
     
 
 
-    elif ('удалитьdddd' in msg):
-        await message.delete()
-        await addrole()
-        print('deleted')
+
 
     with open('NewYear.json', 'w') as p:
         json.dump(people,p, indent=4)
+
+    with open('Duel.json', 'w') as p:
+        json.dump(duel,p, indent=4)
+
     await bot.process_commands(message)
 
 
