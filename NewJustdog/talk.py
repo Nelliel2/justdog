@@ -54,6 +54,10 @@ async def bingpup(message):
     variants = {}
     ints=[]
     num = re.findall(r'\d+', msg)
+
+
+
+
     with open('BOT_CONFIG.json', 'r', encoding='utf-8') as f2:
         BOT_CONFIG = json.load(f2)
     with open('taro.json', 'r', encoding='utf-8') as t:
@@ -312,6 +316,8 @@ async def bingpup(message):
         if ((round(time.time(),2) - return_state('t')) < 5):
             await message.channel.send('Бинпап еще анализирует предыдущий расклад!')
         else:
+            async with message.channel.typing():
+                await asyncio.sleep(20)
             await taro(ints)
             humanID = str(humanchange(humanID, msg))
             human = '<@' + humanID + '>'

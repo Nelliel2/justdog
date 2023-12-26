@@ -516,6 +516,39 @@
             "stock": "",
             "cat": "",
             "spending": 0
+        },
+        "676132084628062208": {
+            "name": "bogatiinell",
+            "money": 50100,
+            "wand": "\u2014",
+            "coat": "\u2014",
+            "car": "\u2014",
+            "animal": "\u2014",
+            "stock": "",
+            "cat": "",
+            "spending": 0
+        },
+        "400985146372784130": {
+            "name": "nellvid2",
+            "money": 50000,
+            "wand": "\u2014",
+            "coat": "\u2014",
+            "car": "\u2014",
+            "animal": "\u2014",
+            "stock": "",
+            "cat": "",
+            "spending": 0
+        },
+        "693432336414670858": {
+            "name": "\u041f\u0438\u043a\u043e\u0432\u0430\u044f \u0434\u0430\u043c\u0430",
+            "money": 50000,
+            "wand": "\u2014",
+            "coat": "\u2014",
+            "car": "\u2014",
+            "animal": "\u2014",
+            "stock": "",
+            "cat": "",
+            "spending": 0
         }
     }
 }

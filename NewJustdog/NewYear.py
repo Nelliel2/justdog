@@ -45,11 +45,11 @@ async def bingpupic(message):
     allI = {0: 'car', 1: 'animal', 2: 'coat', 3: 'wand', 4: 'stock', 5: 'cat'}
 
 
-    attackSpells = ['атака1', 'атака2', 'атака3', 'атака4', 'атака5']
-    attackSpellsDescriptions = ['атака1!', 'атака2!', 'атака3!', 'атака4!', 'атака5!']
-    protectiveSpells = ['защита1', 'защита2']
-    protectiveSpellsDescriptions= ['защита1!', 'защита2!']
-    forbiddenSpells = ['запрещенка1', 'запрещенка2']
+    attackSpells = ['петрификус тоталус', 'инсендио', 'редукто', 'риктусемпра', 'обскуро', 'серпенсортиа', 'мелофорс', 'лик джинкс', 'диффиндо', 'ешь слизней', 'релашио', 'тентакулус', 'орбис', 'левикорпус']
+    attackSpellsDescriptions = ['замораживает противника!', 'пытается сжечь противника!', 'взрывает противника!', 'защекотал противника досмерти!', 'закрыл противнику глаза!', 'призвал змей! противник пропустил удар в пах.', '', ]
+    protectiveSpells = ['протего', 'экспеллиармус', 'депульсо', 'иммобулюс']
+    protectiveSpellsDescriptions= ['создал вокруг себя щит!', 'выбил у противника палочку!', 'отталкнул противника!', 'заставил противника замереть!']
+    forbiddenSpells = ['круциатус', 'империус', 'авада кедавра', 'авадакедавра']
 
 
 
@@ -136,7 +136,7 @@ async def bingpupic(message):
         def get_info_damage(self, body):
             if self.is_somebody_dead():
                 if body == self.firstPlayer:
-                    return f'{body.user.display_name} {body.spells[-1].get_discription()} и отнимает {body.spells[-1].damage} HP'
+                    return f'{body.user.display_name} {body.spells[-1].get_discription()} -{body.spells[-1].damage} HP'
                 elif body == self.secondPlayer:
                     return ''
             if body.spells[-1].passing:
@@ -144,7 +144,7 @@ async def bingpupic(message):
             elif not body.spells[-1].atack:
                 return f'{body.user.display_name} {body.spells[-1].get_discription()}'
             else:
-                return f'{body.user.display_name} {body.spells[-1].get_discription()} и отнимает {body.spells[-1].damage} HP'
+                return f'{body.user.display_name} {body.spells[-1].get_discription()}! -{body.spells[-1].damage} HP'
             
 
         def is_somebody_dead(self):
@@ -254,7 +254,13 @@ async def bingpupic(message):
     #     await damage(duelist)
     #     await add_spell(user, spell)
         
-
+    def clean(text):
+            cleaned_text = ''
+            text = text.replace('ё','е') 
+            for char in text.lower():
+                if char in 'абвгдежзийклмнопрстуфхцчшщъыьэюя ':
+                    cleaned_text += char #cleaned_text = cleaned_text + char
+            return cleaned_text
 
     def humanchange(humanid, msg):
         "Пытается получить id упомянутого человека, иначе возвращает id автора"
@@ -382,13 +388,18 @@ async def bingpupic(message):
         embed = discord.Embed(description=msg, color=0xff0000)
         return embed
 
-
+    async def DuelCanceling():
+        embed = discord.Embed(description=f'Дуэль с <@{return_duelist(str(message.author.id))}> отменена', color=0xff0000)
+        await  message.channel.send(embed=embed)
+        await clearDuel(str(message.author.id), return_duelist(str(message.author.id)))
 
     async def DuelSpending():
 
         def checkSpell(message_spell):
             "Проверяет является ли слово заклинанием"
-            if message_spell.author.id == _duel.firstPlayer.id and (str(message_spell.content) in attackSpells or str(message_spell.content) in protectiveSpells or str(message_spell.content) in forbiddenSpells):
+            message_spell.content = clean(message_spell.content)
+            print(message_spell.content in attackSpells)
+            if message_spell.author.id == _duel.firstPlayer.id and (str(message_spell.content) in attackSpells or str(message_spell.content) in protectiveSpells or str(message_spell.content) in forbiddenSpells or str(message_spell.content) in "отменить дуэль"):
                 return str(message_spell.content) 
             
         _duel = Duel(message.mentions[0], message.author)
@@ -401,6 +412,7 @@ async def bingpupic(message):
 
                 try:
                     spell = await bot.wait_for('message', check=checkSpell, timeout=30.0)
+                    spell.content = clean(spell.content)
                 except asyncio.TimeoutError:
                     _duel.add_spell(_duel.firstPlayer, '', True)
                     text = f'{_duel.firstPlayer.mention} не произнес заклинание'
@@ -414,6 +426,8 @@ async def bingpupic(message):
                 else:         
                     if str(spell.content) in forbiddenSpells:
                         await saidForbiddenSpell(_duel.firstPlayer, _duel.secondPlayer) 
+                        return
+                    if str(spell.content) in "отменить дуэль":
                         return
                     elif (str(spell.content) in str(_duel.firstPlayer.spells)) or (str(spell.content) in str(_duel.secondPlayer.spells)):
                         _duel.add_spell(_duel.firstPlayer, spell.content, True)
@@ -448,9 +462,7 @@ async def bingpupic(message):
 
         
     if ('отменить дуэль' in msg):  
-        embed = discord.Embed(description=f'Дуэль с {message.author.mention} отменена', color=0xff0000)
-        await  message.channel.send(embed=embed)
-        await clearDuel(str(message.author.id), return_duelist(str(message.author.id)))
+        await DuelCanceling()
         return
 
 
