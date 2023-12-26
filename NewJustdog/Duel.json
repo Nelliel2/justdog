@@ -1,260 +1,214 @@
 {
     "users": {
         "540593371597766673": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 1,
+            "duelist": "676132084628062208",
+            "ban": ""
         },
         "698556142078525451": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "400601861435949068": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "153205648014835713": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "871656519589040158": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "661545813138341919": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "700223724607242240": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "489750983497482261": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "543016290164670464": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "680111093389197362": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "553238950865666063": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "757543377150541884": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "726066980427268097": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "773144182201384981": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "1174622918668464191": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "598445468476768257": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "752189077952135178": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "531214938233110528": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "521486262197157918": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "456701198003601409": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "822830480239493150": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "464563507904380938": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "730835270869712947": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "341103828566933506": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "883839955196076042": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "318247539130236928": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "584013283154198533": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "783253719026368523": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "576421070005862422": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "703346014639357993": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "799706066165301278": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         },
         "547509720005738496": {
-            "hp": 100,
-            "attackSpells": [],
-            "protectiveSpells": [],
-            "win": [],
-            "losing": [],
-            "duelist": ""
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
+        },
+        "676132084628062208": {
+            "win": 1,
+            "losing": 0,
+            "duelist": "540593371597766673",
+            "ban": ""
+        },
+        "400985146372784130": {
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
+        },
+        "693432336414670858": {
+            "win": 0,
+            "losing": 0,
+            "duelist": "",
+            "ban": ""
         }
     }
 }

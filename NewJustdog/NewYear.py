@@ -3,8 +3,10 @@ from dotenv import load_dotenv
 from discord.ext import commands
 import discord
 import random
+import datetime
 import os
 import re
+import asyncio
 from bot import *
 
 
@@ -42,8 +44,132 @@ async def bingpupic(message):
     price = [pMetla, pFamiliar, pMantia, pWand, pElexir, pCat]
     allI = {0: 'car', 1: 'animal', 2: 'coat', 3: 'wand', 4: 'stock', 5: 'cat'}
 
-    attackSpells = ['атака1', 'атака2', 'атака3']
+
+    attackSpells = ['атака1', 'атака2', 'атака3', 'атака4', 'атака5']
+    attackSpellsDescriptions = ['атака1!', 'атака2!', 'атака3!', 'атака4!', 'атака5!']
     protectiveSpells = ['защита1', 'защита2']
+    protectiveSpellsDescriptions= ['защита1!', 'защита2!']
+    forbiddenSpells = ['запрещенка1', 'запрещенка2']
+
+
+
+
+    class Spell:
+        def __init__(self, name, passing = False):
+            self.name = name
+            self.passing = passing
+            self.atack = self.is_spell_atack(self.name)
+            self.damage = random.randint(25,40) if self.atack and not self.passing else 0
+
+        def __str__(self):
+            return self.name
+        
+        def __repr__(self):
+            return self.name
+
+        @staticmethod
+        def is_spell_atack(name):
+            if name in attackSpells:
+                return True
+            else:
+                return False
+            
+        def get_discription(self):
+            if self.atack:
+                return attackSpellsDescriptions[attackSpells.index(self.name)]
+            else:
+                return protectiveSpellsDescriptions[protectiveSpells.index(self.name)]
+            
+
+        def block_damage(self):
+            self.damage = 0
+
+    class Player:
+        def __init__(self, user, duelist):
+            self.user = user
+            self.mention = user.mention
+            self.id = user.id
+            self.duelist = duelist
+            self.hp = 100
+            self.spells = []
+            
+
+        def __str__(self):
+            return self.user.name + '#' + self.user.discriminator
+        
+    class Duel:
+        def __init__(self, firstPlayer, secondPlayer):
+            self.firstPlayer = Player(firstPlayer, secondPlayer)
+            self.secondPlayer = Player(secondPlayer, firstPlayer)
+
+            self.firstDisplay = self.firstPlayer
+            self.secondDisplay = self.secondPlayer
+
+        def new_move(self):
+            self.firstPlayer, self.secondPlayer = self.secondPlayer, self.firstPlayer
+
+        def damage(self, body, damage):
+            body.hp = body.hp - damage
+
+        def add_spell(self, body, spell, passing):
+            if spell not in body.spells:
+                body.spells.append(Spell(spell, passing))
+                return True
+            else:
+                body.spells.append(Spell(spell, True))
+                return False
+
+        def heat(self):
+            #Есть ли у кого защита?
+            if (not self.firstPlayer.spells[-1].passing and not self.firstPlayer.spells[-1].atack) or (not self.secondPlayer.spells[-1].passing and not self.secondPlayer.spells[-1].atack):
+                self.firstPlayer.spells[-1].block_damage()
+                self.secondPlayer.spells[-1].block_damage()
+            else:
+                if self.firstPlayer.spells[-1].atack:
+                    self.damage(self.secondPlayer, self.firstPlayer.spells[-1].damage)
+                if self.secondPlayer.spells[-1].atack and not self.is_somebody_dead():
+                    self.damage(self.firstPlayer, self.secondPlayer.spells[-1].damage)
+                
+        def get_info(self):
+            return f'{self.firstDisplay.hp}❤️ {self.firstDisplay.user.mention} *vs* {self.secondDisplay.user.mention} {self.secondDisplay.hp}❤️', f'{self.get_info_damage(self.firstPlayer)}\n{self.get_info_damage(self.secondPlayer)}'
+        
+        def get_info_damage(self, body):
+            if self.is_somebody_dead():
+                if body == self.firstPlayer:
+                    return f'{body.user.display_name} {body.spells[-1].get_discription()} и отнимает {body.spells[-1].damage} HP'
+                elif body == self.secondPlayer:
+                    return ''
+            if body.spells[-1].passing:
+                return f'{body.user.display_name} пропустил ход'
+            elif not body.spells[-1].atack:
+                return f'{body.user.display_name} {body.spells[-1].get_discription()}'
+            else:
+                return f'{body.user.display_name} {body.spells[-1].get_discription()} и отнимает {body.spells[-1].damage} HP'
+            
+
+        def is_somebody_dead(self):
+            if self.firstPlayer.hp <= 0 or self.secondPlayer.hp <= 0:
+                return True
+            else:
+                return False
+            
+        def get_winner(self):
+            if self.firstPlayer.hp <= 0:
+                return self.secondPlayer.user
+            elif self.secondPlayer.hp <= 0:
+                return self.firstPlayer.user
+            
+        def get_looser(self):
+            if self.firstPlayer.hp <= 0:
+                return self.firstPlayer.user
+            elif self.secondPlayer.hp <= 0:
+                return self.secondPlayer.user
+            
+            
+
+
+
+                
 
     with open('NewYear.json', 'r', encoding='utf-8') as p:
         people = json.load(p)
@@ -67,49 +193,71 @@ async def bingpupic(message):
     async def update_duel(userID):
         if not str(userID) in duel['users']:
             duel['users'][userID] = {}
-            duel['users'][userID]['hp'] = 100
-            duel['users'][userID]['attackSpells'] = []
-            duel['users'][userID]['protectiveSpells'] = []
-            duel['users'][userID]['win'] = []
-            duel['users'][userID]['losing'] = []
+            duel['users'][userID]['win'] = 0
+            duel['users'][userID]['losing'] = 0
             duel['users'][userID]['duelist'] = ''
+            duel['users'][userID]['ban'] = ''
 
     
-    await update_data(message.author.id, message.author.name)
-    await update_duel(message.author.id)        
+    await update_data(str(message.author.id), message.author.name)
+    await update_duel(str(message.author.id))        
 
-    async def clear_duel(userID):
-        duel['users'][userID]['hp'] = 100
-        duel['users'][userID]['attackSpells'] = []
-        duel['users'][userID]['protectiveSpells'] = []
+
+    async def saveData():
+        with open('NewYear.json', 'w') as p:
+            json.dump(people,p, indent=4)
+
+
+    async def clearDuel(userID, duelistID):
         duel['users'][userID]['duelist'] = ''
+        duel['users'][duelistID]['duelist'] = ''
+        await saveDuel()
+
+
+    async def saveDuel():
+        with open('Duel.json', 'w') as p:
+            json.dump(duel,p, indent=4)
         
 
-    async def add_spell( userID, spell, attackSpells = True):
+    async def add_spell(userID, spell, attackSpells = True):
         if attackSpells:
             duel['users'][userID]['attackSpells'].append(spell)
         else:
             duel['users'][userID]['protectiveSpells'].append(spell)
     
-    async def edit_var(userID, var, value):
+
+    async def edit_var_duel(userID, var, value):
         duel['users'][userID][var] = value
+
+    async def add_var_duel(userID, var, value):
+        duel['users'][userID][var] += value
+
+    async def edit_var_people(userID, var, value):
+        people['users'][userID][var] = value
+
+    async def add_var_people(userID, var, value):
+        people['users'][userID][var] += value
 
     def return_var(userID, var):
         return duel['users'][userID][var]
     
     def return_duelist(userID):
+        "Возвращает id оппонента"
         return duel['users'][userID]['duelist']
 
-    async def damage(duelist):
-        await add_var(duelist, 'hp', -random.randint(15,20))
+    # async def damage(duelist):
+    #     "Наносит урон оппоненту"
+    #     await add_var(duelist, 'hp', -random.randint(15,20))
 
-    async def heat(user, duelist, spell):
-        await damage(duelist)
-        await add_spell(user, spell)
+    # async def heat(user, duelist, spell):
+    #     "Проводит атаку"
+    #     await damage(duelist)
+    #     await add_spell(user, spell)
         
 
 
     def humanchange(humanid, msg):
+        "Пытается получить id упомянутого человека, иначе возвращает id автора"
         if ('@' in msg):
             humanid = ''
             if ('!' in msg):
@@ -175,7 +323,7 @@ async def bingpupic(message):
     async def toCoin(userID):
         if people['users'][userID]['money'] == 0:
             people['users'][userID]['money'] = 50000
-            
+
     # def check(reaction, user):
     #         emoji = ['⬅', '➡']
     #         if user == message.author and str(reaction.emoji) in emoji:
@@ -213,45 +361,167 @@ async def bingpupic(message):
     # await message.delete()
     # await addrole()
     # print('deleted')
+    async def saidForbiddenSpell(firstPlayer, secondPlayer):
+
+        await add_var_duel(str(firstPlayer.id), 'losing', 1)
+        await add_var_duel(str(secondPlayer.id), 'win', 1)
+        await edit_var_duel(str(firstPlayer.id), 'ban', str(datetime.date.today()))
+        await add_var_people(str(firstPlayer.id), 'money', -100)
+        await clearDuel(firstPlayer.id, secondPlayer.id)
+        embed = discord.Embed(description=f'{firstPlayer.mention} теряет  100 галеонов :coin: и сегодня больше не может примать участие в дуэли', color=0x960000)
+        await message.channel.send(embed=embed)
+
 
     def checkDuel(reaction, user):
+        "Проверяет согласие оппонента на дуэль через отправленную реакцию"
         emoji = ['✅', '❌']
         if user in message.mentions and str(reaction.emoji) in emoji:
-            return str(reaction.emoji) and message.mentions[0] 
+            return str(reaction.emoji) and message.author 
+        
+    def GetEmbed(msg):
+        embed = discord.Embed(description=msg, color=0xff0000)
+        return embed
+
+
+
+    async def DuelSpending():
+
+        def checkSpell(message_spell):
+            "Проверяет является ли слово заклинанием"
+            if message_spell.author.id == _duel.firstPlayer.id and (str(message_spell.content) in attackSpells or str(message_spell.content) in protectiveSpells or str(message_spell.content) in forbiddenSpells):
+                return str(message_spell.content) 
+            
+        _duel = Duel(message.mentions[0], message.author)
+        passCon = 0
+        
+        while not _duel.is_somebody_dead():
+            for i in range(0, 2):
+                text = f'{_duel.firstPlayer.mention}, произнисите заклинание'
+                sendmessage =  await message.channel.send(content=text)
+
+                try:
+                    spell = await bot.wait_for('message', check=checkSpell, timeout=30.0)
+                except asyncio.TimeoutError:
+                    _duel.add_spell(_duel.firstPlayer, '', True)
+                    text = f'{_duel.firstPlayer.mention} не произнес заклинание'
+                    await sendmessage.edit(content=text)
+                    passCon += 1
+                    if passCon == 4:
+                        text = f'Бой между {_duel.firstPlayer.mention} и {_duel.secondPlayer.mention} отменён'
+                        await sendmessage.edit(content=text)
+                        await clearDuel(userID, duelistID)
+                        return
+                else:         
+                    if str(spell.content) in forbiddenSpells:
+                        await saidForbiddenSpell(_duel.firstPlayer, _duel.secondPlayer) 
+                        return
+                    elif (str(spell.content) in str(_duel.firstPlayer.spells)) or (str(spell.content) in str(_duel.secondPlayer.spells)):
+                        _duel.add_spell(_duel.firstPlayer, spell.content, True)
+                        text = f'{_duel.firstPlayer.mention}, заклинание {spell.content} уже было использовано в этом бою'
+                    else:
+                        _duel.add_spell(_duel.firstPlayer, spell.content, False)
+                        text = f'{_duel.firstPlayer.mention} произнес заклинание {spell.content}'
+                    await sendmessage.edit(content=text)
+                    passCon = 0 
+
+                _duel.new_move()
+
+            _duel.heat()    
+            title, info = _duel.get_info()
+            embed = discord.Embed(description=f'{title}\n', color=0xff0000)
+            embed.set_footer(text=f'{info}')
+            await message.channel.send(embed=embed)
+            _duel.new_move()    
+
+
+        embed = discord.Embed(description=f'{_duel.get_winner().mention} победил в дуэли! И получает 100 галеонов :coin:', color=0xff0000)
+        await message.channel.send(embed=embed)
+        await add_var_duel(str(_duel.get_winner().id), 'win', 1)
+        await add_var_duel(str(_duel.get_looser().id), 'losing', 1)
+        await add_var_people(str(_duel.get_winner().id), 'money', 100)
+
+        await saveDuel()
+        await saveData()
+        await clearDuel(userID, duelistID)
+
+        
+
+        
+    if ('отменить дуэль' in msg):  
+        embed = discord.Embed(description=f'Дуэль с {message.author.mention} отменена', color=0xff0000)
+        await  message.channel.send(embed=embed)
+        await clearDuel(str(message.author.id), return_duelist(str(message.author.id)))
+        return
+
 
     if ('дуэль' in words[0]):   
-        if len(message.mentions) == 0:
-            embed = discord.Embed(description=f'❌ Упомяните существо, которое вы хотите вызвать на дуэль', color=0xff0000)
+        if len(message.mentions) == 0 and len(words) <= 4:
+            embed = GetEmbed(f'❌ Упомяните существо, которое вы хотите вызвать на дуэль')
             await message.channel.send(embed=embed)
-            return
+            return 
         
-        #в других местах тоэе в стринг переделать
         userID = str(message.author.id)
         duelistID = str(message.mentions[0].id)
 
-        if return_duelist(duelistID) != '' or return_duelist(userID) != '':
+        try:
+            return_duelist(duelistID)
+        except:
+            embed = discord.Embed(description=f'❌ Упомянутый маг не может участвовать в дуэли', color=0xff0000)
+            await message.channel.send(embed=embed)
+            return
+        if (str(datetime.date.today()) == str(return_var(userID, 'ban'))):
+            embed = discord.Embed(description=f'❌ Вам запрещено сегодня участвовать в дуэли', color=0xff0000)
+            await message.channel.send(embed=embed)           
+            return
+        elif (str(datetime.date.today()) == str(return_var(duelistID, 'ban'))):
+            embed = discord.Embed(description=f'❌ Упомянутому магу запрещено сегодня участвовать в дуэли', color=0xff0000)
+            await message.channel.send(embed=embed)           
+            return
+        elif return_duelist(duelistID) != '' or return_duelist(userID) != '':
             embed = discord.Embed(description=f'❌ Нельзя вести сразу несколько дуэлей', color=0xff0000)
             await message.channel.send(embed=embed)
             return
+        elif duelistID == userID:
+            embed = discord.Embed(description=f'❌ Нельзя вести дуэлей с самим собой', color=0xff0000)
+            await message.channel.send(embed=embed)
+            return
         else:
-            await edit_var(userID, 'duelist', duelistID)
-            await edit_var(duelistID, 'duelist', userID)
+            await edit_var_duel(userID, 'duelist', duelistID)
+            await edit_var_duel(duelistID, 'duelist', userID)
+            await saveDuel()
 
-            embed = discord.Embed(description=f'{message.author.name} вызывает {message.mentions[0].name} на дуэль', color=0xff0000)
-            sendmessage =  await message.channel.send(embed=embed)
+            embed = GetEmbed(f'{message.author.mention} вызывает {message.mentions[0].mention} на дуэль')
+            sendmessage = await message.reply(embed=embed)
+
             await sendmessage.add_reaction('✅')
             await sendmessage.add_reaction('❌')
-            reaction, userok = await bot.wait_for('reaction_add', check=checkDuel)
-            
-            if reaction == '❌':
-                embed = discord.Embed(description=f'{message.author.name}, {message.mentions[0].name} отклонил ваше предложение', color=0xff0000)
-                await message.channel.send(embed=embed)
-                return
-            if reaction == '✅':
-                embed = discord.Embed(description=f'Начинается дуэль между {message.author.name} и {message.mentions[0].name} отклонил ваше предложение', color=0xff0000)
-                await message.channel.send(embed=embed)
-        
-            
+
+            try:
+                reaction, userok = await bot.wait_for('reaction_add', check=checkDuel, timeout=60)
+            except asyncio.TimeoutError:
+                embed = GetEmbed(f'{message.mentions[0].mention} не ответил на запрос. Приглашение отменено')
+                await message.reply(embed=embed)
+                await clearDuel(userID, duelistID)
+                return   
+            else:             
+                if str(reaction.emoji) == '❌':
+                    embed = GetEmbed(f'{message.author.mention}, {message.mentions[0].mention} отклонил ваше предложение')
+                    await message.reply(embed=embed)
+                    await clearDuel(userID, duelistID)
+                    return
+                elif str(reaction.emoji) == '✅':
+                    embed = GetEmbed(f'Начинается дуэль между {message.author.mention} и {message.mentions[0].mention}!') 
+                    await message.reply(embed=embed)
+
+                    accident = await DuelSpending()
+
+                    if accident:
+                        embed = GetEmbed(f'Дуэль между {message.author.mention} и {message.mentions[0].mention} непредвиденно завершена')
+                        await message.reply(embed=embed)
+                        
+    
+
+
 
 
     if ('купить' in words[0]):   
@@ -281,11 +551,10 @@ async def bingpupic(message):
 
 
 
-    with open('NewYear.json', 'w') as p:
-        json.dump(people,p, indent=4)
 
-    with open('Duel.json', 'w') as p:
-        json.dump(duel,p, indent=4)
+
+    await saveDuel()
+    await saveData()
 
     await bot.process_commands(message)
 
