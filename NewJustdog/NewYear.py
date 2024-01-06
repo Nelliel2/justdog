@@ -454,7 +454,7 @@ async def bingpupic(message):
                         text = f'{_duel.firstPlayer.mention}, вы защищаетесь больше 2-ух раз'                    
                     else:
                         _duel.add_spell(_duel.firstPlayer, spell.content, False)
-                        text = f'{_duel.firstPlayer.mention} произнес заклинание {spell.content}'
+                        text = f'{_duel.firstPlayer.mention} произнес заклинание "{spell.content}"'
                     await sendmessage.edit(content=text)
                     passCon = 0 
 
